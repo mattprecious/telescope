@@ -1,0 +1,32 @@
+buildscript {
+  dependencies {
+    classpath 'com.android.tools.build:gradle:0.9.+'
+  }
+}
+
+apply plugin: 'android'
+
+dependencies {
+  compile project(':telescope')
+
+  compile 'com.android.support:support-v4:19.1.+'
+  compile 'com.jakewharton:butterknife:4.0.+'
+}
+
+android {
+  compileSdkVersion 19
+  buildToolsVersion "19.0.3"
+
+  defaultConfig {
+    versionName VERSION_NAME
+  }
+
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_7
+    targetCompatibility JavaVersion.VERSION_1_7
+  }
+
+  lintOptions {
+    abortOnError false
+  }
+}

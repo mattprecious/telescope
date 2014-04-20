@@ -1,0 +1,41 @@
+<resources>
+  <string name="application_name">Telescope Sample</string>
+  <string name="launcher_name">Telescope</string>
+
+  <string name="default_description">
+    Long press with two fingers to capture a bug report. An email will be pre-populated with an
+    address and a subject. A screenshot will also be taken and automatically attached to the email
+    for you.
+  </string>
+  <string name="device_info_description">
+    The provided email launcher can be configured to populate the body of the email as well. In this
+    example, the body is filled with the app version and information about the current device.
+  </string>
+  <string name="styled_description">
+    The color of the bars are easily configured to match your theme.
+  </string>
+  <string name="children_only_description">
+    By default, Telescope takes a screenshot of the entire window it is in. If you prefer, Telescope
+    can be easily configured to only take a screenshot of the children inside the TelescopeLayout.
+  </string>
+  <string name="three_finger_description">
+    Some of your views may already use two-finger gestures. Telescope can be configured to require
+    any number of fingers to trigger. In this example, a three-finger press is required.
+  </string>
+  <string name="other_target_description">
+    Telescope can be configured to take a screenshot of a different view. In this example, long
+    press this container to take a screenshot of the view below.
+  </string>
+
+  <string name="attributions"><![CDATA[
+    <b>
+      Tap-And-Hold Icons
+      (<a href="http://www.thenounproject.com/term/tap-and-hold/13944/">1</a>,
+      <a href="http://www.thenounproject.com/term/tap-and-hold/13957/">2</a>)
+    </b><br />
+    <i>
+      by <a href="http://www.thenounproject.com/Glimy">Gary Lim</a> from
+      <a href="http://thenounproject.com">The Noun Project</a>
+    </i>
+  ]]></string>
+</resources>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <style name="None"></style>
+
+  <style name="Theme.Telescope" parent="android:Theme.Holo.Light"></style>
+
+  <style name="Widget.Telescope.Description" parent="None">
+    <item name="android:lineSpacingMultiplier">1.2</item>
+    <item name="android:padding">16dp</item>
+    <item name="android:textColor">#313131</item>
+    <item name="android:textIsSelectable">true</item>
+    <item name="android:textSize">20sp</item>
+  </style>
+</resources>

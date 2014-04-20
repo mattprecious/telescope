@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.mattprecious.telescope.sample.ui.OtherTargetView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:divider="?android:attr/dividerVertical"
+      android:orientation="vertical"
+      android:showDividers="middle"
+      >
+    <com.mattprecious.telescope.TelescopeLayout
+        android:id="@+id/telescope"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        >
+      <ScrollView
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          >
+        <TextView
+            style="@style/Widget.Telescope.Description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableTop="@drawable/two_finger_press"
+            android:text="@string/other_target_description"
+            />
+      </ScrollView>
+    </com.mattprecious.telescope.TelescopeLayout>
+    <TextView
+        android:id="@+id/target"
+        style="@style/Widget.Telescope.Description"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="Other View"
+        />
+  </LinearLayout>
+</com.mattprecious.telescope.sample.ui.OtherTargetView>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.mattprecious.telescope.sample.ui.SampleToastView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+  <com.mattprecious.telescope.TelescopeLayout
+      android:id="@+id/telescope"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      app:progressColor="#ff4444"
+      >
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+      <TextView
+          style="@style/Widget.Telescope.Description"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:drawableTop="@drawable/two_finger_press_styled"
+          android:text="@string/styled_description"
+          />
+    </ScrollView>
+  </com.mattprecious.telescope.TelescopeLayout>
+</com.mattprecious.telescope.sample.ui.SampleToastView>
