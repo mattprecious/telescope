@@ -3,6 +3,8 @@ Telescope
 
 A simple tool to allow easy bug report capturing within your app.
 
+![](images/sample.gif)
+
 
 
 Usage
