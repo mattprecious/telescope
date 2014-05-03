@@ -2,6 +2,18 @@
   <string name="application_name">Telescope Sample</string>
   <string name="launcher_name">Telescope</string>
 
+  <string name="drawer_close">Close</string>
+  <string name="drawer_open">Open</string>
+
+  <string-array name="navigation">
+    <item>Default</item>
+    <item>Device Info</item>
+    <item>Styled</item>
+    <item>Children Only</item>
+    <item>Three Finger</item>
+    <item>Other Target</item>
+  </string-array>
+
   <string name="default_description">
     Long press with two fingers to capture a bug report. An email will be pre-populated with an
     address and a subject. A screenshot will also be taken and automatically attached to the email
