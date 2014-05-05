@@ -103,7 +103,7 @@ public class TelescopeLayout extends FrameLayout {
 
     AnimatorUpdateListener progressUpdateListener = new AnimatorUpdateListener() {
       @Override public void onAnimationUpdate(ValueAnimator animation) {
-        progressFraction = (float) animation.getAnimatedValue();
+        progressFraction = animation.getAnimatedFraction();
         invalidate();
       }
     };
@@ -121,7 +121,7 @@ public class TelescopeLayout extends FrameLayout {
     doneAnimator.setDuration(DONE_DURATION_MS);
     doneAnimator.addUpdateListener(new AnimatorUpdateListener() {
       @Override public void onAnimationUpdate(ValueAnimator animation) {
-        doneFraction = (float) animation.getAnimatedValue();
+        doneFraction = animation.getAnimatedFraction();
         invalidate();
       }
     });
