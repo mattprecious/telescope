@@ -1,8 +1,11 @@
 package com.mattprecious.telescope;
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.util.DisplayMetrics;
+import android.util.Log;
 
 /**
  * A basic {@link Lens} implementation that composes an email with the provided addresses and
@@ -20,17 +23,32 @@ import android.util.DisplayMetrics;
  * </ul>
  */
 public class EmailDeviceInfoLens extends EmailLens {
+  private static final String TAG = "EmailDeviceInfoLens";
+
   private final Context context;
   private final String version;
   private final int versionCode;
   private final String body;
 
-  public EmailDeviceInfoLens(Context context, String[] addresses, String subject, String version,
-      int versionCode) {
+  public EmailDeviceInfoLens(Context context, String[] addresses, String subject) {
     super(context, addresses, subject);
     this.context = context;
-    this.version = version;
-    this.versionCode = versionCode;
+
+    PackageInfo packageInfo = null;
+    try {
+      packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+    } catch (PackageManager.NameNotFoundException e) {
+      Log.e(TAG, "Unable to get app info");
+    }
+
+    if (packageInfo == null) {
+      version = "0";
+      versionCode = 0;
+    } else {
+      version = packageInfo.versionName;
+      versionCode = packageInfo.versionCode;
+    }
+
     this.body = makeBody();
   }
 

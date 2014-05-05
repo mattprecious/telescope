@@ -7,7 +7,6 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import com.mattprecious.telescope.EmailDeviceInfoLens;
 import com.mattprecious.telescope.TelescopeLayout;
-import com.mattprecious.telescope.sample.BuildConfig;
 import com.mattprecious.telescope.sample.R;
 
 public class SampleEmailDeviceInfoView extends FrameLayout {
@@ -22,8 +21,6 @@ public class SampleEmailDeviceInfoView extends FrameLayout {
     ButterKnife.inject(this);
 
     telescopeView.setLens(
-        new EmailDeviceInfoLens(getContext(), new String[] { "bugs@blackhole.io" }, "Bug report",
-            BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE)
-    );
+        new EmailDeviceInfoLens(getContext(), new String[] { "bugs@blackhole.io" }, "Bug report"));
   }
 }
