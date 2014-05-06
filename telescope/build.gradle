@@ -15,11 +15,6 @@ android {
   defaultConfig {
     versionName VERSION_NAME
   }
-
-  compileOptions {
-    sourceCompatibility JavaVersion.VERSION_1_7
-    targetCompatibility JavaVersion.VERSION_1_7
-  }
 }
 
 android.libraryVariants.all { variant ->
