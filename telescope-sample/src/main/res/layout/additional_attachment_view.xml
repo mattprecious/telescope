@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.mattprecious.telescope.sample.ui.SampleAdditionalAttachmentEmailView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+  <com.mattprecious.telescope.TelescopeLayout
+      android:id="@+id/telescope"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      >
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+      <TextView
+          style="@style/Widget.Telescope.Description"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:drawableTop="@drawable/two_finger_press"
+          android:text="@string/additional_attachment_description"
+          />
+    </ScrollView>
+  </com.mattprecious.telescope.TelescopeLayout>
+</com.mattprecious.telescope.sample.ui.SampleAdditionalAttachmentEmailView>
