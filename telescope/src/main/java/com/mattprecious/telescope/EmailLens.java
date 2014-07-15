@@ -4,7 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * <p>
@@ -31,7 +34,7 @@ public class EmailLens implements Lens {
   }
 
   @Override public void onCapture(File screenshot) {
-    Intent intent = new Intent(Intent.ACTION_SEND);
+    Intent intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
     intent.setType("message/rfc822");
 
     if (subject != null) {
@@ -47,11 +50,21 @@ public class EmailLens implements Lens {
       intent.putExtra(Intent.EXTRA_TEXT, body);
     }
 
+    ArrayList<Uri> attachments = new ArrayList<>();
+    attachments.addAll(getAdditionalAttachments());
+
     if (screenshot != null) {
-      intent.setType("image/png");
-      intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(screenshot));
+      attachments.add(Uri.fromFile(screenshot));
+    }
+
+    if (!attachments.isEmpty()) {
+      intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, attachments);
     }
 
     context.startActivity(intent);
+  }
+
+  protected Set<Uri> getAdditionalAttachments() {
+    return new HashSet<>();
   }
 }

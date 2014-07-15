@@ -12,8 +12,13 @@
     <item>Children Only</item>
     <item>Three Finger</item>
     <item>Other Target</item>
+    <item>Additional Attachment</item>
   </string-array>
 
+  <string name="additional_attachment_description">
+    The provided email launcher can be configured to attach another file. In this example, we
+    attach a text file with some Shakespeare in it because we\'re classy like that.
+  </string>
   <string name="default_description">
     Long press with two fingers to capture a bug report. An email will be pre-populated with an
     address and a subject. A screenshot will also be taken and automatically attached to the email

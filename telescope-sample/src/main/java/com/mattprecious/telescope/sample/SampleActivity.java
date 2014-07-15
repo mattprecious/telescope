@@ -30,6 +30,7 @@ public class SampleActivity extends Activity {
   private static final int PAGE_CHILDREN_ONLY = 3;
   private static final int PAGE_THREE_FINGER = 4;
   private static final int PAGE_OTHER_TARGET = 5;
+  private static final int PAGE_ADDITIONAL_ATTACHMENT = 6;
 
   @InjectView(R.id.drawer) DrawerLayout drawerView;
   @InjectView(R.id.drawer_list) ListView drawerListView;
@@ -94,6 +95,9 @@ public class SampleActivity extends Activity {
         break;
       case PAGE_OTHER_TARGET:
         view = getLayoutInflater().inflate(R.layout.other_target_view, contentView, false);
+        break;
+      case PAGE_ADDITIONAL_ATTACHMENT:
+        view = getLayoutInflater().inflate(R.layout.additional_attachment_view, contentView, false);
         break;
       default:
         throw new IllegalArgumentException("Unknown position: " + position);
