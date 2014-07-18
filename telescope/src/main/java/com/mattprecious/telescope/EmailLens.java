@@ -55,9 +55,11 @@ public class EmailLens implements Lens {
       intent.putExtra(Intent.EXTRA_TEXT, body);
     }
 
-    ArrayList<Uri> attachments = new ArrayList<>();
-    attachments.addAll(getAdditionalAttachments());
-
+    Set<Uri> additionalAttachments = getAdditionalAttachments();
+    ArrayList<Uri> attachments = new ArrayList<>(additionalAttachments.size() + 1 /* screenshot */);
+    if (!additionalAttachments.isEmpty()) {
+      attachments.addAll(additionalAttachments);
+    }
     if (screenshot != null) {
       attachments.add(Uri.fromFile(screenshot));
     }
