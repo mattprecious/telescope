@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -70,6 +70,6 @@ public class EmailLens implements Lens {
   }
 
   protected Set<Uri> getAdditionalAttachments() {
-    return new HashSet<>();
+    return Collections.emptySet();
   }
 }
