@@ -20,7 +20,6 @@ public class SampleEmailDeviceInfoView extends FrameLayout {
     super.onFinishInflate();
     ButterKnife.inject(this);
 
-    telescopeView.setLens(
-        new EmailDeviceInfoLens(getContext(), new String[] { "bugs@blackhole.io" }, "Bug report"));
+    telescopeView.setLens(new EmailDeviceInfoLens(getContext(), "Bug report", "bugs@blackhole.io"));
   }
 }
