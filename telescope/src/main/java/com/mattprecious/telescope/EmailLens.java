@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.net.Uri;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,9 +21,15 @@ public class EmailLens implements Lens {
   private final String subject;
   private final String[] addresses;
 
+  /** @deprecated Use {@link #EmailLens(Context, String, String...)}. */
+  @Deprecated
   public EmailLens(Context context, String[] addresses, String subject) {
+    this(context, subject, addresses);
+  }
+
+  public EmailLens(Context context, String subject, String... addresses) {
     this.context = context;
-    this.addresses = addresses == null ? null : Arrays.copyOf(addresses, addresses.length);
+    this.addresses = addresses == null ? null : addresses.clone();
     this.subject = subject;
   }
 

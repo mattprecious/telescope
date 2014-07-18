@@ -13,7 +13,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 public class SampleAdditionalAttachmentEmailView extends FrameLayout {
@@ -52,7 +51,7 @@ public class SampleAdditionalAttachmentEmailView extends FrameLayout {
     }
 
     telescopeView.setLens(
-        new EmailLens(getContext(), new String[] { "bugs@blackhole.io" }, "Bug report") {
+        new EmailLens(getContext(), "Bug report", "bugs@blackhole.io") {
           @Override protected Set<Uri> getAdditionalAttachments() {
             return Collections.singleton(Uri.fromFile(file));
           }
