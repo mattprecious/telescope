@@ -30,10 +30,14 @@ public class EmailDeviceInfoLens extends EmailLens {
   private final int versionCode;
   private final String body;
 
-  /** @deprecated Use {@link #EmailDeviceInfoLens(Context, String, String...)}. */
+  /**
+   * @deprecated Use {@link #EmailDeviceInfoLens(Context, String, String...)} or {@link
+   * #EmailDeviceInfoLens(Context, String, String, int, String...)}.
+   */
   @Deprecated
-  public EmailDeviceInfoLens(Context context, String[] addresses, String subject) {
-    this(context, subject, addresses);
+  public EmailDeviceInfoLens(Context context, String[] addresses, String subject, String version,
+      int versionCode) {
+    this(context, subject, version, versionCode, addresses);
   }
 
   public EmailDeviceInfoLens(Context context, String subject, String... addresses) {
@@ -55,6 +59,15 @@ public class EmailDeviceInfoLens extends EmailLens {
       versionCode = packageInfo.versionCode;
     }
 
+    this.body = makeBody();
+  }
+
+  public EmailDeviceInfoLens(Context context, String subject, String version, int versionCode,
+      String... addresses) {
+    super(context, subject, addresses);
+    this.context = context;
+    this.version = version;
+    this.versionCode = versionCode;
     this.body = makeBody();
   }
 
