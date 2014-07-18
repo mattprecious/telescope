@@ -66,15 +66,15 @@ public class EmailDeviceInfoLens extends EmailLens {
     DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
     String densityBucket = getDensityString(displayMetrics);
 
-    return "\n\n--------------------\n" //
-        + "Version: " + version + '\n' //
+    return "Version: " + version + '\n' //
         + "Version code: " + versionCode + '\n' //
         + "Make: " + Build.MANUFACTURER + '\n' //
         + "Model: " + Build.MODEL + '\n' //
         + "Resolution: " + displayMetrics.heightPixels + 'x' + displayMetrics.widthPixels + '\n' //
         + "Density: " + displayMetrics.densityDpi + "dpi (" + densityBucket + ")\n" //
         + "Release: " + Build.VERSION.RELEASE + '\n' //
-        + "API: " + Build.VERSION.SDK_INT + '\n'; //
+        + "API: " + Build.VERSION.SDK_INT + '\n'
+        + "-------------------\n\n"; //
   }
 
   public static String getDensityString(DisplayMetrics displayMetrics) {
