@@ -6,6 +6,9 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * A basic {@link Lens} implementation that composes an email with the provided addresses and
@@ -27,8 +30,7 @@ public class EmailDeviceInfoLens extends EmailLens {
 
   private final Context context;
   private final String version;
-  private final int versionCode;
-  private final String body;
+  private final String versionCode;
 
   /**
    * @deprecated Use {@link #EmailDeviceInfoLens(Context, String, String...)} or {@link
@@ -53,13 +55,11 @@ public class EmailDeviceInfoLens extends EmailLens {
 
     if (packageInfo == null) {
       version = "0";
-      versionCode = 0;
+      versionCode = String.valueOf(0);
     } else {
       version = packageInfo.versionName;
-      versionCode = packageInfo.versionCode;
+      versionCode = String.valueOf(packageInfo.versionCode);
     }
-
-    this.body = makeBody();
   }
 
   public EmailDeviceInfoLens(Context context, String subject, String version, int versionCode,
@@ -67,27 +67,38 @@ public class EmailDeviceInfoLens extends EmailLens {
     super(context, subject, addresses);
     this.context = context;
     this.version = version;
-    this.versionCode = versionCode;
-    this.body = makeBody();
+    this.versionCode = String.valueOf(versionCode);
   }
 
   @Override protected String getBody() {
-    return body;
+    DisplayMetrics dm = context.getResources().getDisplayMetrics();
+    String densityBucket = getDensityString(dm);
+
+    Map<String, String> info = new LinkedHashMap<>();
+    info.put("Version", version);
+    info.put("Version code: ", versionCode);
+    info.put("Make", Build.MANUFACTURER);
+    info.put("Model", Build.MODEL);
+    info.put("Resolution", dm.heightPixels + "x" + dm.widthPixels);
+    info.put("Density", dm.densityDpi + "dpi (" + densityBucket + ")");
+    info.put("Release", Build.VERSION.RELEASE);
+    info.put("API", String.valueOf(Build.VERSION.SDK_INT));
+    info.putAll(getInfo());
+
+    StringBuilder builder = new StringBuilder();
+    for (Map.Entry entry : info.entrySet()) {
+      builder.append(entry.getKey()).append(": ").append(entry.getValue()).append('\n');
+    }
+
+    return builder.append("-------------------\n\n").toString(); //
   }
 
-  private String makeBody() {
-    DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-    String densityBucket = getDensityString(displayMetrics);
-
-    return "Version: " + version + '\n' //
-        + "Version code: " + versionCode + '\n' //
-        + "Make: " + Build.MANUFACTURER + '\n' //
-        + "Model: " + Build.MODEL + '\n' //
-        + "Resolution: " + displayMetrics.heightPixels + 'x' + displayMetrics.widthPixels + '\n' //
-        + "Density: " + displayMetrics.densityDpi + "dpi (" + densityBucket + ")\n" //
-        + "Release: " + Build.VERSION.RELEASE + '\n' //
-        + "API: " + Build.VERSION.SDK_INT + '\n'
-        + "-------------------\n\n"; //
+  /**
+   * Pairs of additional data to be included in the email body. Called every time a new email is
+   * created.
+   */
+  protected Map<String, String> getInfo() {
+    return Collections.emptyMap();
   }
 
   public static String getDensityString(DisplayMetrics displayMetrics) {
