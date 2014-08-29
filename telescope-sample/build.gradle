@@ -1,16 +1,16 @@
 buildscript {
   dependencies {
-    classpath 'com.android.tools.build:gradle:0.12.+'
+    classpath 'com.android.tools.build:gradle:0.12.2'
   }
 }
 
-apply plugin: 'android'
+apply plugin: 'com.android.application'
 
 dependencies {
   compile project(':telescope')
 
-  compile 'com.android.support:support-v4:19.1.+'
-  compile 'com.jakewharton:butterknife:4.0.+'
+  compile 'com.android.support:support-v4:20.0.0'
+  compile 'com.jakewharton:butterknife:5.1.2'
 }
 
 android {
