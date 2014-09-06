@@ -57,6 +57,7 @@ public class TelescopeLayout extends FrameLayout {
   private final ValueAnimator doneAnimator;
 
   private Lens lens;
+  private boolean interceptTouchEvents;
   private View screenshotTarget;
   private int pointerCount;
   private boolean screenshot;
@@ -87,6 +88,7 @@ public class TelescopeLayout extends FrameLayout {
     halfStrokeWidth = PROGRESS_STROKE_DP * density / 2;
 
     TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.TelescopeLayout, defStyle, 0);
+    interceptTouchEvents = a.getBoolean(R.styleable.TelescopeLayout_interceptTouchEvents, true);
     pointerCount = a.getInt(R.styleable.TelescopeLayout_pointerCount, DEFAULT_POINTER_COUNT);
     int progressColor =
         a.getColor(R.styleable.TelescopeLayout_progressColor, DEFAULT_PROGRESS_COLOR);
@@ -189,6 +191,16 @@ public class TelescopeLayout extends FrameLayout {
   }
 
   /**
+   * <p>
+   * Set whether this layout will intercept touch events when two fingers are down.
+   * Default is true.
+   * </p>
+   */
+  public void setInterceptTouchEvents(boolean interceptTouchEvents) {
+    this.interceptTouchEvents = interceptTouchEvents;
+  }
+
+  /**
    * <p>Set whether vibration is enabled when a capture is triggered. Default is true.</p>
    *
    * <p><i>Requires the {@link android.Manifest.permission#VIBRATE} permission.</i></p>
@@ -197,8 +209,27 @@ public class TelescopeLayout extends FrameLayout {
     this.vibrate = vibrate;
   }
 
+  @Override public boolean dispatchTouchEvent(MotionEvent event) {
+    boolean handled = super.dispatchTouchEvent(event);
+    if (!interceptTouchEvents) {
+      if (!pressing
+          && event.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN
+          && event.getPointerCount() == pointerCount) {
+        start();
+      }
+      if (pressing) {
+        handleTouchEvent(event);
+      }
+    }
+    return handled;
+  }
+
   @Override public boolean onInterceptTouchEvent(MotionEvent ev) {
     if (!isEnabled()) {
+      return false;
+    }
+
+    if (!interceptTouchEvents) {
       return false;
     }
 
@@ -229,6 +260,21 @@ public class TelescopeLayout extends FrameLayout {
       return true;
     }
 
+    Boolean handled = handleTouchEvent(event);
+
+    if (handled == null) {
+      return super.onTouchEvent(event);
+    } else {
+      return handled;
+    }
+  }
+
+  /**
+   * @return null if {#onTouchEvent} should delegate to the parent, and the value to return from
+   * {#onTouchEvent} otherwise.
+   */
+  private Boolean handleTouchEvent(MotionEvent event) {
+    Boolean handled = null;
     switch (event.getActionMasked()) {
       case MotionEvent.ACTION_CANCEL:
       case MotionEvent.ACTION_UP:
@@ -236,13 +282,14 @@ public class TelescopeLayout extends FrameLayout {
         if (pressing) {
           cancel();
         }
-
-        return false;
+        handled = false;
+        break;
       case MotionEvent.ACTION_DOWN:
         if (!pressing && event.getPointerCount() == pointerCount) {
           start();
         }
-        return true;
+        handled = true;
+        break;
       case MotionEvent.ACTION_POINTER_DOWN:
         if (event.getPointerCount() == pointerCount) {
           // There's a few cases where we'll get called called in both onInterceptTouchEvent and
@@ -250,20 +297,20 @@ public class TelescopeLayout extends FrameLayout {
           if (!pressing) {
             start();
           }
-          return true;
+          handled = true;
         } else {
           cancel();
+          handled = null;
         }
         break;
       case MotionEvent.ACTION_MOVE:
         if (pressing) {
           invalidate();
-          return true;
+          handled = true;
         }
         break;
     }
-
-    return super.onTouchEvent(event);
+    return handled;
   }
 
   @Override public void draw(Canvas canvas) {

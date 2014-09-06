@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <declare-styleable name="TelescopeLayout">
+    <attr name="interceptTouchEvents" format="boolean"/>
     <attr name="pointerCount" format="integer"/>
     <attr name="progressColor" format="color"/>
     <attr name="screenshot" format="boolean"/>
