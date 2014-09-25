@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+Version 1.2.0 *(2014-09-24)*
+----------------------------
+
+* New: Add ability to not intercept touch events.
+
 Version 1.1.0 *(2014-07-18)*
 ----------------------------
 
