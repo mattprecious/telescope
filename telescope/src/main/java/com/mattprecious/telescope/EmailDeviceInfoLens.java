@@ -76,7 +76,7 @@ public class EmailDeviceInfoLens extends EmailLens {
 
     Map<String, String> info = new LinkedHashMap<>();
     info.put("Version", version);
-    info.put("Version code: ", versionCode);
+    info.put("Version code", versionCode);
     info.put("Make", Build.MANUFACTURER);
     info.put("Model", Build.MODEL);
     info.put("Resolution", dm.heightPixels + "x" + dm.widthPixels);
