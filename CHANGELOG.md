@@ -1,6 +1,14 @@
 Change Log
 ==========
 
+Version 1.3.0 *(2014-10-07)*
+----------------------------
+
+* New: Obey `ViewParent#requestDisallowInterceptTouchEvent(boolean)`. Have your multi-touch views
+call this method on their parent during touch events and Telescope will not intercept the events.
+* Removed `setInterceptTouchEvents(boolean)` and `attr/interceptTouchEvents` added in 1.2.0. Use
+`requestDisallowInterceptTouchEvent` instead.
+
 Version 1.2.0 *(2014-09-24)*
 ----------------------------
 
