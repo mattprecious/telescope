@@ -69,7 +69,6 @@ public class TelescopeLayout extends FrameLayout {
   private boolean pressing;
   private boolean capturing;
   private boolean saving;
-  private boolean disallowIntercept;
 
   public TelescopeLayout(Context context) {
     this(context, null);
@@ -198,13 +197,8 @@ public class TelescopeLayout extends FrameLayout {
     this.vibrate = vibrate;
   }
 
-  @Override public void requestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-    super.requestDisallowInterceptTouchEvent(disallowIntercept);
-    this.disallowIntercept = disallowIntercept;
-  }
-
   @Override public boolean onInterceptTouchEvent(MotionEvent ev) {
-    if (!isEnabled() || disallowIntercept) {
+    if (!isEnabled()) {
       return false;
     }
 
@@ -226,7 +220,7 @@ public class TelescopeLayout extends FrameLayout {
   }
 
   @Override public boolean onTouchEvent(MotionEvent event) {
-    if (!isEnabled() || disallowIntercept) {
+    if (!isEnabled()) {
       return false;
     }
 
@@ -238,8 +232,6 @@ public class TelescopeLayout extends FrameLayout {
     switch (event.getActionMasked()) {
       case MotionEvent.ACTION_CANCEL:
       case MotionEvent.ACTION_UP:
-        disallowIntercept = false;
-        // Fall-through.
       case MotionEvent.ACTION_POINTER_UP:
         if (pressing) {
           cancel();
