@@ -2,7 +2,7 @@ import com.android.builder.core.BuilderConstants;
 
 buildscript {
   dependencies {
-    classpath 'com.android.tools.build:gradle:0.12.+'
+    classpath 'com.android.tools.build:gradle:1.0.0'
   }
 }
 
@@ -10,7 +10,7 @@ apply plugin: 'com.android.library'
 
 android {
   compileSdkVersion 19
-  buildToolsVersion '20.0.0'
+  buildToolsVersion '21.1.1'
 
   defaultConfig {
     versionName VERSION_NAME
