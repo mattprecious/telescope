@@ -226,7 +226,7 @@ public class TelescopeLayout extends FrameLayout {
   }
 
   @Override public boolean onTouchEvent(MotionEvent event) {
-    if (!isEnabled() || disallowIntercept) {
+    if (!isEnabled()) {
       return false;
     }
 

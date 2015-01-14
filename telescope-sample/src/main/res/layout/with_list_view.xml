@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.mattprecious.telescope.sample.ui.SampleEmailView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+  <com.mattprecious.telescope.TelescopeLayout
+      android:id="@+id/telescope"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      >
+    <ListView
+        android:id="@+id/content_list"
+        android:layout_width="240dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="#dddddd"
+        android:choiceMode="singleChoice"
+        android:divider="?android:attr/listDivider"
+        />
+  </com.mattprecious.telescope.TelescopeLayout>
+</com.mattprecious.telescope.sample.ui.SampleEmailView>

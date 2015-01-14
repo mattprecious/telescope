@@ -31,6 +31,7 @@ public class SampleActivity extends Activity {
   private static final int PAGE_THREE_FINGER = 4;
   private static final int PAGE_OTHER_TARGET = 5;
   private static final int PAGE_ADDITIONAL_ATTACHMENT = 6;
+  private static final int PAGE_WITH_LIST_VIEW = 7;
 
   @InjectView(R.id.drawer) DrawerLayout drawerView;
   @InjectView(R.id.drawer_list) ListView drawerListView;
@@ -98,6 +99,14 @@ public class SampleActivity extends Activity {
         break;
       case PAGE_ADDITIONAL_ATTACHMENT:
         view = getLayoutInflater().inflate(R.layout.additional_attachment_view, contentView, false);
+        break;
+      case PAGE_WITH_LIST_VIEW:
+        view = getLayoutInflater().inflate(R.layout.with_list_view, contentView, false);
+        ListView list = (ListView) view.findViewById(R.id.content_list);
+        list.setAdapter(new ArrayAdapter<>(this, R.layout.drawer_item_view, new String[] {
+            "This", "is", "a", "list", "with", "a", "rather", "large", "number", "of", "things",
+            "in", "it"
+        }));
         break;
       default:
         throw new IllegalArgumentException("Unknown position: " + position);

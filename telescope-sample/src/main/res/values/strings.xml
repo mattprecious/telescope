@@ -13,6 +13,7 @@
     <item>Three Finger</item>
     <item>Other Target</item>
     <item>Additional Attachment</item>
+    <item>With ListView</item>
   </string-array>
 
   <string name="additional_attachment_description">
