@@ -1,6 +1,13 @@
 Change Log
 ==========
 
+Version 1.4.0 *(2015-02-06)*
+----------------------------
+
+* Removed override of `ViewParent#requestDisallowInterceptTouchEvent(boolean)` due to issues with
+`ListView` and other views. `TelescopeLayout` seems to obey `requestDisallowInterceptTouchEvent()`
+without any modifications.
+
 Version 1.3.0 *(2014-10-07)*
 ----------------------------
 
