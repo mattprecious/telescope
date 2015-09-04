@@ -375,8 +375,12 @@ public class TelescopeLayout extends FrameLayout {
   /** Recursive delete of a file or directory. */
   private static void delete(File file) {
     if (file.isDirectory()) {
-      for (File child : file.listFiles())
-        delete(child);
+      File[] files = file.listFiles();
+      if (files != null) {
+        for (File child : files) {
+          delete(child);
+        }
+      }
     }
 
     file.delete();
