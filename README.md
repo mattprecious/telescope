@@ -31,8 +31,8 @@ layouts only in the debug builds.
 Permissions
 -----------
 
-By default, Telescope requires `WRITE_EXTERNAL_STORAGE` and `VIBRATE` permissions. To avoid
-requiring these permissions, you can disable screenshots and/or vibration respectively.
+Pre-KitKat, `WRITE_EXTERNAL_STORAGE` is required for saving screenshots. Screenshots can be disabled
+using the configuration options below.
 
 
 

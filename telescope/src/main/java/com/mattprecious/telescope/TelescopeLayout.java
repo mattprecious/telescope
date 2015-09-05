@@ -7,8 +7,8 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.os.Handler;
+import android.os.Process;
 import android.os.Vibrator;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -21,7 +21,9 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static android.Manifest.permission.VIBRATE;
 import static android.animation.ValueAnimator.AnimatorUpdateListener;
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static android.graphics.Paint.Style;
 
 /**
@@ -50,7 +52,7 @@ public class TelescopeLayout extends FrameLayout {
   };
 
   private final float halfStrokeWidth;
-  private final String screenshotPath;
+  private final File screenshotFolder;
   private final Paint progressPaint;
   private final ValueAnimator progressAnimator;
   private final ValueAnimator progressCancelAnimator;
@@ -128,12 +130,12 @@ public class TelescopeLayout extends FrameLayout {
 
     if (isInEditMode()) {
       vibrator = null;
-      screenshotPath = null;
+      screenshotFolder = null;
       return;
     }
 
     vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-    screenshotPath = makeScreenshotPath(context);
+    screenshotFolder = getScreenshotFolder(context);
   }
 
   /**
@@ -141,7 +143,7 @@ public class TelescopeLayout extends FrameLayout {
    * finished using a screenshot reference.
    */
   public static void cleanUp(Context context) {
-    File path = new File(makeScreenshotPath(context));
+    File path = getScreenshotFolder(context);
     if (!path.exists()) {
       return;
     }
@@ -329,7 +331,7 @@ public class TelescopeLayout extends FrameLayout {
   private void trigger() {
     stop();
 
-    if (vibrate) {
+    if (vibrate && hasVibratePermission(getContext())) {
       vibrator.vibrate(VIBRATION_DURATION_MS);
     }
 
@@ -386,10 +388,12 @@ public class TelescopeLayout extends FrameLayout {
     file.delete();
   }
 
-  private static String makeScreenshotPath(Context context) {
-    return Environment.getExternalStorageDirectory().toString()
-        + "/Telescope/"
-        + context.getPackageName();
+  private static File getScreenshotFolder(Context context) {
+    return new File(context.getExternalFilesDir(null), "telescope");
+  }
+
+  private static boolean hasVibratePermission(Context context) {
+    return context.checkPermission(VIBRATE, Process.myPid(), Process.myUid()) == PERMISSION_GRANTED;
   }
 
   /**
@@ -414,10 +418,9 @@ public class TelescopeLayout extends FrameLayout {
       }
 
       try {
-        File path = new File(screenshotPath);
-        path.mkdirs();
+        screenshotFolder.mkdirs();
 
-        File file = new File(path, SCREENSHOT_FILE_FORMAT.format(new Date()));
+        File file = new File(screenshotFolder, SCREENSHOT_FILE_FORMAT.format(new Date()));
         FileOutputStream out = new FileOutputStream(file);
 
         screenshot.compress(Bitmap.CompressFormat.PNG, 100, out);
