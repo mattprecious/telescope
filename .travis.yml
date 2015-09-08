@@ -6,10 +6,13 @@ jdk:
 
 android:
   components:
-    - build-tools-20.0.0
+    - build-tools-21.1.1
     - android-19
   licenses:
     - android-sdk-license-5be876d5
+
+script:
+  - ./gradlew clean check
 
 branches:
   except:
@@ -18,5 +21,8 @@ branches:
 notifications:
   email: false
 
-script:
-  - ./gradlew clean check
+sudo: false
+
+cache:
+  directories:
+    - $HOME/.gradle
