@@ -11,6 +11,9 @@ android:
   licenses:
     - android-sdk-license-5be876d5
 
+script:
+  - ./gradlew clean check
+
 branches:
   except:
     - gh-pages
@@ -18,5 +21,8 @@ branches:
 notifications:
   email: false
 
-script:
-  - ./gradlew clean check
+sudo: false
+
+cache:
+  directories:
+    - $HOME/.gradle
