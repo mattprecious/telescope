@@ -16,7 +16,7 @@ import java.util.Set;
  *
  * <p>The {@link #getBody()} method can be overridden to pre-populate the body of the email.</p>
  */
-public class EmailLens implements Lens {
+public class EmailLens extends Lens {
   private final Context context;
   private final String subject;
   private final String[] addresses;
