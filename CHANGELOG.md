@@ -1,6 +1,14 @@
 Change Log
 ==========
 
+Version 1.5.0 *(2015-09-22)*
+----------------------------
+
+* Removed the need for `WRITE_EXTERNAL_STORAGE` permission on KitKat+.
+  * Screenshots are now stored in a private app directory on external storage. Ensure that you're
+    calling `Telescope.cleanUp()` somewhere in your app lifecycle to remove these screenshots.
+* Check for `VIBRATE` permission before attempting to vibrate.
+
 Version 1.4.0 *(2015-02-06)*
 ----------------------------
 
