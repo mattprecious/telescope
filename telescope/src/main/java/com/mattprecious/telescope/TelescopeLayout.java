@@ -348,10 +348,16 @@ public class TelescopeLayout extends FrameLayout {
           View view = getTargetView();
           view.setDrawingCacheEnabled(true);
           Bitmap screenshot = Bitmap.createBitmap(view.getDrawingCache());
+          if (lens != null) {
+            lens.onCapture(screenshot, new BitmapProcessorListener() {
+              @Override
+              public void onBitmapReady(Bitmap screenshot) {
+                capturing = false;
+                new SaveScreenshotTask(screenshot).execute();
+              }
+            });
+          }
           view.setDrawingCacheEnabled(false);
-
-          capturing = false;
-          new SaveScreenshotTask(screenshot).execute();
         }
       });
     } else {
