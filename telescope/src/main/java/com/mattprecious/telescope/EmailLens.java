@@ -68,6 +68,8 @@ public class EmailLens extends Lens {
       intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, attachments);
     }
 
+    intent = Intent.createChooser(intent, null);
+
     context.startActivity(intent);
   }
 
