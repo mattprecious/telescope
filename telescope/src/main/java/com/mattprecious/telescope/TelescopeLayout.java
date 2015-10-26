@@ -1,23 +1,40 @@
 package com.mattprecious.telescope;
 
 import android.animation.ValueAnimator;
+import android.annotation.TargetApi;
+import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.PixelFormat;
+import android.hardware.display.DisplayManager;
+import android.hardware.display.VirtualDisplay;
+import android.media.Image;
+import android.media.ImageReader;
+import android.media.projection.MediaProjection;
+import android.media.projection.MediaProjectionManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Process;
 import android.os.Vibrator;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.Surface;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -25,6 +42,8 @@ import static android.Manifest.permission.VIBRATE;
 import static android.animation.ValueAnimator.AnimatorUpdateListener;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static android.graphics.Paint.Style;
+import static android.os.Build.VERSION.SDK_INT;
+import static android.os.Build.VERSION_CODES.LOLLIPOP;
 
 /**
  * A layout used to take a screenshot and initiate a callback when the user long-presses the
@@ -43,6 +62,8 @@ public class TelescopeLayout extends FrameLayout {
   private static final int DEFAULT_POINTER_COUNT = 2;
   private static final int DEFAULT_PROGRESS_COLOR = 0xff33b5e5;
 
+  private final MediaProjectionManager projectionManager;
+  private final WindowManager windowManager;
   private final Vibrator vibrator;
   private final Handler handler = new Handler();
   private final Runnable trigger = new Runnable() {
@@ -50,6 +71,8 @@ public class TelescopeLayout extends FrameLayout {
       trigger();
     }
   };
+  private final IntentFilter requestCaptureFilter;
+  private final BroadcastReceiver requestCaptureReceiver;
 
   private final float halfStrokeWidth;
   private final File screenshotFolder;
@@ -61,7 +84,7 @@ public class TelescopeLayout extends FrameLayout {
   private Lens lens;
   private View screenshotTarget;
   private int pointerCount;
-  private boolean screenshot;
+  private ScreenshotMode screenshotMode;
   private boolean screenshotChildrenOnly;
   private boolean vibrate;
 
@@ -92,7 +115,8 @@ public class TelescopeLayout extends FrameLayout {
     pointerCount = a.getInt(R.styleable.TelescopeLayout_pointerCount, DEFAULT_POINTER_COUNT);
     int progressColor =
         a.getColor(R.styleable.TelescopeLayout_progressColor, DEFAULT_PROGRESS_COLOR);
-    screenshot = a.getBoolean(R.styleable.TelescopeLayout_screenshot, true);
+    screenshotMode = ScreenshotMode.values()[a.getInt(R.styleable.TelescopeLayout_screenshotMode,
+        ScreenshotMode.SYSTEM.ordinal())];
     screenshotChildrenOnly =
         a.getBoolean(R.styleable.TelescopeLayout_screenshotChildrenOnly, false);
     vibrate = a.getBoolean(R.styleable.TelescopeLayout_vibrate, true);
@@ -129,13 +153,54 @@ public class TelescopeLayout extends FrameLayout {
     });
 
     if (isInEditMode()) {
+      projectionManager = null;
+      windowManager = null;
       vibrator = null;
       screenshotFolder = null;
+      requestCaptureFilter = null;
+      requestCaptureReceiver = null;
       return;
     }
 
+    windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
     vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
     screenshotFolder = getScreenshotFolder(context);
+
+    if (SDK_INT < LOLLIPOP) {
+      projectionManager = null;
+      requestCaptureFilter = null;
+      requestCaptureReceiver = null;
+    } else {
+      projectionManager =
+          (MediaProjectionManager) context.getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+
+      requestCaptureFilter =
+          new IntentFilter(RequestCaptureActivity.getResultBroadcastAction(context));
+      requestCaptureReceiver = new BroadcastReceiver() {
+        @TargetApi(Build.VERSION_CODES.LOLLIPOP) @Override
+        public void onReceive(Context context, Intent intent) {
+          unregisterRequestCaptureReceiver();
+
+          int resultCode = intent.getIntExtra(RequestCaptureActivity.RESULT_EXTRA_CODE,
+              Activity.RESULT_CANCELED);
+          Intent data = intent.getParcelableExtra(RequestCaptureActivity.RESULT_EXTRA_DATA);
+
+          final MediaProjection mediaProjection =
+              projectionManager.getMediaProjection(resultCode, data);
+          if (mediaProjection == null) {
+            captureCanvasScreenshot();
+            return;
+          }
+
+          // Delay capture until after the permission dialog is gone.
+          postDelayed(new Runnable() {
+            @Override public void run() {
+              captureNativeScreenshot(mediaProjection);
+            }
+          }, 1000);
+        }
+      };
+    }
   }
 
   /**
@@ -166,15 +231,9 @@ public class TelescopeLayout extends FrameLayout {
     progressPaint.setColor(progressColor);
   }
 
-  /**
-   * <p>Set whether a screenshot will be taken when capturing. Default is true.</p>
-   *
-   * <p>
-   * <i>Requires the {@link android.Manifest.permission#WRITE_EXTERNAL_STORAGE} permission.</i>
-   * </p>
-   */
-  public void setScreenshot(boolean screenshot) {
-    this.screenshot = screenshot;
+  /** Sets the {@link ScreenshotMode} used to capture a screenshot. */
+  public void setScreenshotMode(ScreenshotMode screenshotMode) {
+    this.screenshotMode = screenshotMode;
   }
 
   /**
@@ -335,34 +394,60 @@ public class TelescopeLayout extends FrameLayout {
       vibrator.vibrate(VIBRATION_DURATION_MS);
     }
 
+    switch (screenshotMode) {
+      case SYSTEM:
+        if (projectionManager != null && !screenshotChildrenOnly && screenshotTarget == this) {
+          // Take a full screenshot of the device. Request permission first.
+          registerRequestCaptureReceiver();
+          getContext().startActivity(new Intent(getContext(), RequestCaptureActivity.class));
+          break;
+        }
+
+        // System was requested but isn't supported. Fall through.
+      case CANVAS:
+        captureCanvasScreenshot();
+        break;
+      case NONE:
+        new SaveScreenshotTask(null).execute();
+        break;
+      default:
+        throw new IllegalStateException("Unknown screenshot mode: " + screenshotMode);
+    }
+  }
+
+  private void captureCanvasScreenshot() {
+    capturingStart();
+
+    // Wait for the next frame to be sure our progress bars are hidden.
+    post(new Runnable() {
+      @Override public void run() {
+        View view = getTargetView();
+        view.setDrawingCacheEnabled(true);
+        Bitmap screenshot = Bitmap.createBitmap(view.getDrawingCache());
+        if (lens != null) {
+          lens.onCapture(screenshot, new BitmapProcessorListener() {
+            @Override public void onBitmapReady(Bitmap screenshot) {
+              capturingEnd();
+              new SaveScreenshotTask(screenshot).execute();
+            }
+          });
+        }
+        view.setDrawingCacheEnabled(false);
+      }
+    });
+  }
+
+  private void capturingStart() {
     progressAnimator.end();
     progressFraction = 0;
 
-    if (screenshot) {
-      capturing = true;
-      invalidate();
+    capturing = true;
+    invalidate();
+  }
 
-      // Wait for the next frame to be sure our progress bars are hidden.
-      post(new Runnable() {
-        @Override public void run() {
-          View view = getTargetView();
-          view.setDrawingCacheEnabled(true);
-          Bitmap screenshot = Bitmap.createBitmap(view.getDrawingCache());
-          if (lens != null) {
-            lens.onCapture(screenshot, new BitmapProcessorListener() {
-              @Override
-              public void onBitmapReady(Bitmap screenshot) {
-                capturing = false;
-                new SaveScreenshotTask(screenshot).execute();
-              }
-            });
-          }
-          view.setDrawingCacheEnabled(false);
-        }
-      });
-    } else {
-      new SaveScreenshotTask(null).execute();
-    }
+  private void capturingEnd() {
+    capturing = false;
+    doneAnimator.start();
   }
 
   /**
@@ -444,11 +529,112 @@ public class TelescopeLayout extends FrameLayout {
 
     @Override protected void onPostExecute(File screenshot) {
       saving = false;
-      doneAnimator.start();
 
       if (lens != null) {
         lens.onCapture(screenshot);
       }
     }
+  }
+
+  private void registerRequestCaptureReceiver() {
+    getContext().registerReceiver(requestCaptureReceiver, requestCaptureFilter);
+  }
+
+  private void unregisterRequestCaptureReceiver() {
+    getContext().unregisterReceiver(requestCaptureReceiver);
+  }
+
+  @TargetApi(LOLLIPOP) private void captureNativeScreenshot(final MediaProjection projection) {
+    capturingStart();
+
+    // Wait for the next frame to be sure our progress bars are hidden.
+    post(new Runnable() {
+      @Override public void run() {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        windowManager.getDefaultDisplay().getRealMetrics(displayMetrics);
+        final int width = displayMetrics.widthPixels;
+        final int height = displayMetrics.heightPixels;
+
+        final ImageReader imageReader =
+            ImageReader.newInstance(width, height, PixelFormat.RGBA_8888, 1);
+        Surface surface = imageReader.getSurface();
+
+        final VirtualDisplay display =
+            projection.createVirtualDisplay("telescope", width, height, displayMetrics.densityDpi,
+                DisplayManager.VIRTUAL_DISPLAY_FLAG_PRESENTATION, surface, null, null);
+
+        imageReader.setOnImageAvailableListener(new ImageReader.OnImageAvailableListener() {
+          @Override public void onImageAvailable(ImageReader reader) {
+            Image image = null;
+            Bitmap bitmap = null;
+            Bitmap croppedBitmap = null;
+            FileOutputStream out = null;
+
+            try {
+              image = reader.acquireLatestImage();
+              capturingEnd();
+
+              if (image == null) {
+                return;
+              }
+
+              saving = true;
+
+              Image.Plane[] planes = image.getPlanes();
+              ByteBuffer buffer = planes[0].getBuffer();
+              int pixelStride = planes[0].getPixelStride();
+              int rowStride = planes[0].getRowStride();
+              int rowPadding = rowStride - pixelStride * width;
+
+              bitmap = Bitmap.createBitmap(width + rowPadding / pixelStride, height,
+                  Bitmap.Config.ARGB_8888);
+              bitmap.copyPixelsFromBuffer(buffer);
+
+              // Trim the screenshot to the correct size.
+              croppedBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height);
+
+              screenshotFolder.mkdirs();
+
+              File file = new File(screenshotFolder, SCREENSHOT_FILE_FORMAT.format(new Date()));
+              out = new FileOutputStream(file);
+
+              croppedBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+              out.flush();
+
+              saving = false;
+              if (lens != null) {
+                lens.onCapture(file);
+              }
+            } catch (IOException e) {
+              Log.e(TAG,
+                  "Failed to save screenshot. Is the WRITE_EXTERNAL_STORAGE permission requested?");
+            } finally {
+              imageReader.close();
+              display.release();
+              projection.stop();
+
+              if (image != null) {
+                image.close();
+              }
+
+              if (bitmap != null) {
+                bitmap.recycle();
+              }
+
+              if (croppedBitmap != null) {
+                croppedBitmap.recycle();
+              }
+
+              if (out != null) {
+                try {
+                  out.close();
+                } catch (IOException ignored) {
+                }
+              }
+            }
+          }
+        }, null);
+      }
+    });
   }
 }
