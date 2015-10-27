@@ -338,19 +338,18 @@ public class TelescopeLayout extends FrameLayout {
     int width = getMeasuredWidth();
     int height = getMeasuredHeight();
 
-    float fraction = saving ? 1 : progressFraction;
-    if (fraction > 0) {
+    if (progressFraction > 0) {
       // Top (left to right).
-      canvas.drawLine(0, halfStrokeWidth, width * fraction, halfStrokeWidth, progressPaint);
+      canvas.drawLine(0, halfStrokeWidth, width * progressFraction, halfStrokeWidth, progressPaint);
       // Right (top to bottom).
-      canvas.drawLine(width - halfStrokeWidth, 0, width - halfStrokeWidth, height * fraction,
-          progressPaint);
+      canvas.drawLine(width - halfStrokeWidth, 0, width - halfStrokeWidth,
+          height * progressFraction, progressPaint);
       // Bottom (right to left).
-      canvas.drawLine(width, height - halfStrokeWidth, width - (width * fraction),
+      canvas.drawLine(width, height - halfStrokeWidth, width - (width * progressFraction),
           height - halfStrokeWidth, progressPaint);
       // Left (bottom to top).
-      canvas.drawLine(halfStrokeWidth, height, halfStrokeWidth, height - (height * fraction),
-          progressPaint);
+      canvas.drawLine(halfStrokeWidth, height, halfStrokeWidth,
+          height - (height * progressFraction), progressPaint);
     }
 
     if (doneFraction < 1) {
@@ -500,7 +499,6 @@ public class TelescopeLayout extends FrameLayout {
 
     @Override protected void onPreExecute() {
       saving = true;
-      invalidate();
     }
 
     @Override protected File doInBackground(Void... params) {
