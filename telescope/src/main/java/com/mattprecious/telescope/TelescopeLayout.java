@@ -632,28 +632,28 @@ public class TelescopeLayout extends FrameLayout {
               Log.e(TAG,
                   "Failed to save screenshot. Is the WRITE_EXTERNAL_STORAGE permission requested?");
             } finally {
-              imageReader.close();
-              display.release();
-              projection.stop();
-
-              if (image != null) {
-                image.close();
-              }
-
-              if (bitmap != null) {
-                bitmap.recycle();
-              }
-
-              if (croppedBitmap != null) {
-                croppedBitmap.recycle();
-              }
-
               if (out != null) {
                 try {
                   out.close();
                 } catch (IOException ignored) {
                 }
               }
+
+              if (croppedBitmap != null) {
+                croppedBitmap.recycle();
+              }
+
+              if (bitmap != null) {
+                bitmap.recycle();
+              }
+
+              if (image != null) {
+                image.close();
+              }
+
+              imageReader.close();
+              display.release();
+              projection.stop();
             }
           }
         }, getBackgroundHandler());
