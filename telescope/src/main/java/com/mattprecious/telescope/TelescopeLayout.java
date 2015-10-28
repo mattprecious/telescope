@@ -568,7 +568,7 @@ public class TelescopeLayout extends FrameLayout {
         final int width = displayMetrics.widthPixels;
         final int height = displayMetrics.heightPixels;
 
-        final ImageReader imageReader =
+        ImageReader imageReader =
             ImageReader.newInstance(width, height, PixelFormat.RGBA_8888, 1);
         Surface surface = imageReader.getSurface();
 
@@ -651,7 +651,7 @@ public class TelescopeLayout extends FrameLayout {
                 image.close();
               }
 
-              imageReader.close();
+              reader.close();
               display.release();
               projection.stop();
             }
