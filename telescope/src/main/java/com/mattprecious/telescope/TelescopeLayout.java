@@ -21,6 +21,8 @@ import android.media.projection.MediaProjectionManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Looper;
 import android.os.Process;
 import android.os.Vibrator;
 import android.util.AttributeSet;
@@ -61,6 +63,8 @@ public class TelescopeLayout extends FrameLayout {
 
   private static final int DEFAULT_POINTER_COUNT = 2;
   private static final int DEFAULT_PROGRESS_COLOR = 0xff33b5e5;
+
+  private static Handler backgroundHandler;
 
   private final MediaProjectionManager projectionManager;
   private final WindowManager windowManager;
@@ -542,6 +546,17 @@ public class TelescopeLayout extends FrameLayout {
     getContext().unregisterReceiver(requestCaptureReceiver);
   }
 
+  private static Handler getBackgroundHandler() {
+    if (backgroundHandler == null) {
+      HandlerThread backgroundThread =
+          new HandlerThread("telescope", Process.THREAD_PRIORITY_BACKGROUND);
+      backgroundThread.start();
+      backgroundHandler = new Handler(backgroundThread.getLooper());
+    }
+
+    return backgroundHandler;
+  }
+
   @TargetApi(LOLLIPOP) private void captureNativeScreenshot(final MediaProjection projection) {
     capturingStart();
 
@@ -570,7 +585,12 @@ public class TelescopeLayout extends FrameLayout {
 
             try {
               image = reader.acquireLatestImage();
-              capturingEnd();
+
+              post(new Runnable() {
+                @Override public void run() {
+                  capturingEnd();
+                }
+              });
 
               if (image == null) {
                 return;
@@ -593,7 +613,8 @@ public class TelescopeLayout extends FrameLayout {
 
               screenshotFolder.mkdirs();
 
-              File file = new File(screenshotFolder, SCREENSHOT_FILE_FORMAT.format(new Date()));
+              final File file =
+                  new File(screenshotFolder, SCREENSHOT_FILE_FORMAT.format(new Date()));
               out = new FileOutputStream(file);
 
               croppedBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
@@ -601,7 +622,11 @@ public class TelescopeLayout extends FrameLayout {
 
               saving = false;
               if (lens != null) {
-                lens.onCapture(file);
+                post(new Runnable() {
+                  @Override public void run() {
+                    lens.onCapture(file);
+                  }
+                });
               }
             } catch (IOException e) {
               Log.e(TAG,
@@ -631,7 +656,7 @@ public class TelescopeLayout extends FrameLayout {
               }
             }
           }
-        }, null);
+        }, getBackgroundHandler());
       }
     });
   }
