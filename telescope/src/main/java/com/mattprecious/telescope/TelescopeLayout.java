@@ -568,7 +568,7 @@ public class TelescopeLayout extends FrameLayout {
         final int width = displayMetrics.widthPixels;
         final int height = displayMetrics.heightPixels;
 
-        ImageReader imageReader = ImageReader.newInstance(width, height, PixelFormat.RGBX_8888, 2);
+        ImageReader imageReader = ImageReader.newInstance(width, height, PixelFormat.RGBA_8888, 2);
         Surface surface = imageReader.getSurface();
 
         final VirtualDisplay display =
