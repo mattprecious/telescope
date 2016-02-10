@@ -200,12 +200,16 @@ public class TelescopeLayout extends FrameLayout {
             return;
           }
 
-          // Delay capture until after the permission dialog is gone.
-          postDelayed(new Runnable() {
-            @Override public void run() {
-              captureNativeScreenshot(mediaProjection);
-            }
-          }, 1000);
+          if (intent.getBooleanExtra(RequestCaptureActivity.RESULT_EXTRA_PROMPT_SHOWN, true)) {
+            // Delay capture until after the permission dialog is gone.
+            postDelayed(new Runnable() {
+              @Override public void run() {
+                captureNativeScreenshot(mediaProjection);
+              }
+            }, 500);
+          } else {
+            captureNativeScreenshot(mediaProjection);
+          }
         }
       };
     }

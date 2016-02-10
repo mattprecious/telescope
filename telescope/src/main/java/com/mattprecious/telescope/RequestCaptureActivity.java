@@ -13,6 +13,7 @@ import android.util.Log;
 public final class RequestCaptureActivity extends Activity {
   public static final String RESULT_EXTRA_CODE = "code";
   public static final String RESULT_EXTRA_DATA = "data";
+  public static final String RESULT_EXTRA_PROMPT_SHOWN = "prompt-shown";
 
   private static final String TAG = "TelescopeCapture";
   private static final int REQUEST_CODE = 1;
@@ -20,6 +21,8 @@ public final class RequestCaptureActivity extends Activity {
   public static String getResultBroadcastAction(Context context) {
     return context.getPackageName() + ".telescope.CAPTURE";
   }
+
+  private long requestStartTime;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -37,6 +40,8 @@ public final class RequestCaptureActivity extends Activity {
     MediaProjectionManager projectionManager =
         (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
     Intent intent = projectionManager.createScreenCaptureIntent();
+
+    requestStartTime = System.currentTimeMillis();
     startActivityForResult(intent, REQUEST_CODE);
   }
 
@@ -45,11 +50,17 @@ public final class RequestCaptureActivity extends Activity {
       Intent intent = new Intent(getResultBroadcastAction(this));
       intent.putExtra(RESULT_EXTRA_CODE, resultCode);
       intent.putExtra(RESULT_EXTRA_DATA, data);
+      intent.putExtra(RESULT_EXTRA_PROMPT_SHOWN, promptShown());
       sendBroadcast(intent);
       finish();
       return;
     }
 
     super.onActivityResult(requestCode, resultCode, data);
+  }
+
+  private boolean promptShown() {
+    // Assume that the prompt was shown if the response took 200ms or more to return.
+    return System.currentTimeMillis() - requestStartTime > 200;
   }
 }
