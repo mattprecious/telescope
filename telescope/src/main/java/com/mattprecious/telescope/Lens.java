@@ -1,7 +1,8 @@
 package com.mattprecious.telescope;
 
 import android.graphics.Bitmap;
-
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import java.io.File;
 
 /**
@@ -20,10 +21,7 @@ public abstract class Lens {
    * @param listener callback for when additional processing has been completed. This listener must
    * be called for the screenshot to be saved to disk.
    */
-  public void onCapture(Bitmap screenshot, BitmapProcessorListener listener) {
-    if (listener == null) {
-      throw new IllegalArgumentException("BitmapProcessorListener cannot be null");
-    }
+  public void onCapture(@Nullable Bitmap screenshot, @NonNull BitmapProcessorListener listener) {
     listener.onBitmapReady(screenshot);
   }
 
@@ -33,5 +31,5 @@ public abstract class Lens {
    * @param screenshot A reference to the screenshot that was captured. Can be null if screenshots
    * were disabled.
    */
-  public abstract void onCapture(File screenshot);
+  public abstract void onCapture(@Nullable File screenshot);
 }
