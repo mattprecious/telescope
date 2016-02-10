@@ -19,12 +19,14 @@ implementations:
 * `EmailDeviceInfoLens`: Enhances `EmailLens` by pre-populating the email body with app and device
   info
 
-Screenshots will be stored on the external storage in `/Telescope/com.app.package/`. To have
+Screenshots will be stored on the external storage in your app's private directory. To have
 Telescope clean up the screenshots folder, call `TelescopeLayout.cleanUp(Context)`. Ideally, this
 would be called in the `onDestroy()` method of your `Activity` or `Fragment`.
 
 If you are using the Gradle-based build system, you can wrap this view group around your activity
 layouts only in the debug builds.
+
+See the [u2020 project][2] for a more advanced example.
 
 
 
@@ -43,7 +45,7 @@ The view group can be configured as follows:
 
 * Set the number of fingers to trigger with `app:pointerCount` / `setPointerCount(int)`
 * Set the progress color with `app:progressColor` / `setProgressColor(int)`
-* Disable screenshots with `app:screenshot` / `setScreenshot(boolean)`
+* Change the screenshot method with `app:screenshotMode` / `setScreenshotMode(ScreenshotMode)`
 * Screenshot children only with `app:screenshotChildrenOnly` / `setScreenshotChildrenOnly(boolean)`
 * Set the screenshot target with`setScreenshotTarget(View)`
 * Disable vibration with `app:vibrate` / `setVibrate(boolean)`
@@ -87,3 +89,4 @@ License
 
 
  [1]: http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.mattprecious.telescope&a=telescope&v=LATEST
+ [2]: https://github.com/jakewharton/u2020
