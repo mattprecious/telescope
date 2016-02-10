@@ -61,7 +61,7 @@ public class TelescopeLayout extends FrameLayout {
   private static final long VIBRATION_DURATION_MS = 50;
 
   private static final int DEFAULT_POINTER_COUNT = 2;
-  private static final int DEFAULT_PROGRESS_COLOR = 0xff33b5e5;
+  private static final int DEFAULT_PROGRESS_COLOR = 0xff2196f3;
 
   private static Handler backgroundHandler;
 
