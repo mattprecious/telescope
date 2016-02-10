@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import static android.Manifest.permission.VIBRATE;
 import static android.animation.ValueAnimator.AnimatorUpdateListener;
@@ -54,7 +55,7 @@ import static android.os.Build.VERSION_CODES.LOLLIPOP;
 public class TelescopeLayout extends FrameLayout {
   private static final String TAG = "Telescope";
   private static final SimpleDateFormat SCREENSHOT_FILE_FORMAT =
-      new SimpleDateFormat("'telescope'-yyyy-MM-dd-HHmmss.'png'");
+      new SimpleDateFormat("'telescope'-yyyy-MM-dd-HHmmss.'png'", Locale.US);
   private static final int PROGRESS_STROKE_DP = 4;
   private static final long CANCEL_DURATION_MS = 250;
   private static final long DONE_DURATION_MS = 1000;
