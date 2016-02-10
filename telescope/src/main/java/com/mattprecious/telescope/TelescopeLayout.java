@@ -25,6 +25,8 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Process;
 import android.os.Vibrator;
+import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -47,6 +49,7 @@ import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static android.graphics.Paint.Style;
 import static android.os.Build.VERSION.SDK_INT;
 import static android.os.Build.VERSION_CODES.LOLLIPOP;
+import static com.mattprecious.telescope.Preconditions.checkNotNull;
 
 /**
  * A layout used to take a screenshot and initiate a callback when the user long-presses the
@@ -225,12 +228,17 @@ public class TelescopeLayout extends FrameLayout {
   }
 
   /** Set the {@link Lens} to be called when the user triggers a capture. */
-  public void setLens(Lens lens) {
+  public void setLens(@NonNull Lens lens) {
+    checkNotNull(lens, "lens == null");
     this.lens = lens;
   }
 
   /** Set the number of pointers requires to trigger the capture. Default is 2. */
-  public void setPointerCount(int pointerCount) {
+  public void setPointerCount(@IntRange(from = 1) int pointerCount) {
+    if (pointerCount < 1) {
+      throw new IllegalArgumentException("pointerCount < 1");
+    }
+
     this.pointerCount = pointerCount;
   }
 
@@ -240,7 +248,8 @@ public class TelescopeLayout extends FrameLayout {
   }
 
   /** Sets the {@link ScreenshotMode} used to capture a screenshot. */
-  public void setScreenshotMode(ScreenshotMode screenshotMode) {
+  public void setScreenshotMode(@NonNull ScreenshotMode screenshotMode) {
+    checkNotNull(screenshotMode, "screenshotMode == null");
     this.screenshotMode = screenshotMode;
   }
 
@@ -253,7 +262,8 @@ public class TelescopeLayout extends FrameLayout {
   }
 
   /** Set the target view that the screenshot will capture. */
-  public void setScreenshotTarget(View screenshotTarget) {
+  public void setScreenshotTarget(@NonNull View screenshotTarget) {
+    checkNotNull(screenshotTarget, "screenshotTarget == null");
     this.screenshotTarget = screenshotTarget;
   }
 
