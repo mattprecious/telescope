@@ -43,12 +43,14 @@ Configuration
 
 The view group can be configured as follows:
 
-* Set the number of fingers to trigger with `app:pointerCount` / `setPointerCount(int)`
-* Set the progress color with `app:progressColor` / `setProgressColor(int)`
-* Change the screenshot method with `app:screenshotMode` / `setScreenshotMode(ScreenshotMode)`
-* Screenshot children only with `app:screenshotChildrenOnly` / `setScreenshotChildrenOnly(boolean)`
+* Set the number of fingers to trigger with `app:telescope_pointerCount` / `setPointerCount(int)`
+* Set the progress color with `app:telescope_progressColor` / `setProgressColor(int)`
+* Change the screenshot method with `app:telescope_screenshotMode` /
+`setScreenshotMode(ScreenshotMode)`
+* Screenshot children only with `app:telescope_screenshotChildrenOnly` /
+`setScreenshotChildrenOnly(boolean)`
 * Set the screenshot target with`setScreenshotTarget(View)`
-* Disable vibration with `app:vibrate` / `setVibrate(boolean)`
+* Disable vibration with `app:telescope_vibrate` / `setVibrate(boolean)`
 
 
 

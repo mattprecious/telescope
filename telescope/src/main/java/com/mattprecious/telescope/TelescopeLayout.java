@@ -116,15 +116,18 @@ public class TelescopeLayout extends FrameLayout {
     float density = context.getResources().getDisplayMetrics().density;
     halfStrokeWidth = PROGRESS_STROKE_DP * density / 2;
 
-    TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.TelescopeLayout, defStyle, 0);
-    pointerCount = a.getInt(R.styleable.TelescopeLayout_pointerCount, DEFAULT_POINTER_COUNT);
-    int progressColor =
-        a.getColor(R.styleable.TelescopeLayout_progressColor, DEFAULT_PROGRESS_COLOR);
-    screenshotMode = ScreenshotMode.values()[a.getInt(R.styleable.TelescopeLayout_screenshotMode,
+    TypedArray a =
+        context.obtainStyledAttributes(attrs, R.styleable.telescope_TelescopeLayout, defStyle, 0);
+    pointerCount = a.getInt(R.styleable.telescope_TelescopeLayout_telescope_pointerCount,
+        DEFAULT_POINTER_COUNT);
+    int progressColor = a.getColor(R.styleable.telescope_TelescopeLayout_telescope_progressColor,
+        DEFAULT_PROGRESS_COLOR);
+    screenshotMode = ScreenshotMode.values()[a.getInt(
+        R.styleable.telescope_TelescopeLayout_telescope_screenshotMode,
         ScreenshotMode.SYSTEM.ordinal())];
     screenshotChildrenOnly =
-        a.getBoolean(R.styleable.TelescopeLayout_screenshotChildrenOnly, false);
-    vibrate = a.getBoolean(R.styleable.TelescopeLayout_vibrate, true);
+        a.getBoolean(R.styleable.telescope_TelescopeLayout_telescope_screenshotChildrenOnly, false);
+    vibrate = a.getBoolean(R.styleable.telescope_TelescopeLayout_telescope_vibrate, true);
     a.recycle();
 
     progressPaint = new Paint(Paint.ANTI_ALIAS_FLAG);

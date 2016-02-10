@@ -9,7 +9,7 @@
       android:id="@+id/telescope"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      app:screenshotChildrenOnly="true"
+      app:telescope_screenshotChildrenOnly="true"
       >
     <ScrollView
         android:layout_width="match_parent"
