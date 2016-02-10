@@ -59,14 +59,14 @@ Download
 
 Gradle:
 ```groovy
-compile 'com.mattprecious.telescope:telescope:1.5.0@aar'
+compile 'com.mattprecious.telescope:telescope:2.0.0@aar'
 ```
 or Maven:
 ```xml
 <dependency>
   <groupId>com.mattprecious.telescope</groupId>
   <artifactId>telescope</artifactId>
-  <version>1.5.0</version>
+  <version>2.0.0</version>
   <type>apklib</type>
 </dependency>
 ```
