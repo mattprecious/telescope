@@ -57,7 +57,7 @@ The view group can be configured as follows:
 Download
 --------
 
-Download [the latest JAR][1] or grab via Gradle:
+Gradle:
 ```groovy
 compile 'com.mattprecious.telescope:telescope:1.5.0@aar'
 ```

@@ -1,5 +1,3 @@
-import com.android.builder.core.BuilderConstants;
-
 buildscript {
   dependencies {
     classpath 'com.android.tools.build:gradle:1.5.0'
@@ -26,16 +24,6 @@ android {
 
 dependencies {
   compile 'com.android.support:support-annotations:23.1.1'
-}
-
-android.libraryVariants.all { variant ->
-  def name = variant.buildType.name
-  if (!BuilderConstants.DEBUG.equals(name)) {
-    def task = project.tasks.create "jar${name.capitalize()}", Jar
-    task.dependsOn variant.javaCompile
-    task.from variant.javaCompile.destinationDir
-    artifacts.add('archives', task);
-  }
 }
 
 apply from: 'gradle-mvn-push.gradle'
