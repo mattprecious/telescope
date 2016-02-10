@@ -4,8 +4,8 @@ import android.content.Context;
 import android.net.Uri;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import com.mattprecious.telescope.EmailLens;
 import com.mattprecious.telescope.TelescopeLayout;
 import com.mattprecious.telescope.sample.R;
@@ -23,7 +23,7 @@ public class SampleAdditionalAttachmentEmailView extends FrameLayout {
       + "For never was a story of more woe\n"
       + "Than this of Juliet and her Romeo.";
 
-  @InjectView(R.id.telescope) TelescopeLayout telescopeView;
+  @Bind(R.id.telescope) TelescopeLayout telescopeView;
 
   public SampleAdditionalAttachmentEmailView(Context context, AttributeSet attrs) {
     super(context, attrs);
@@ -31,7 +31,7 @@ public class SampleAdditionalAttachmentEmailView extends FrameLayout {
 
   @Override protected void onFinishInflate() {
     super.onFinishInflate();
-    ButterKnife.inject(this);
+    ButterKnife.bind(this);
 
     File filesDir = getContext().getExternalFilesDir(null);
     final File file = new File(filesDir, "shakespeare.txt");

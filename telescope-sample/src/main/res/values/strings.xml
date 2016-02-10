@@ -2,18 +2,13 @@
   <string name="application_name">Telescope Sample</string>
   <string name="launcher_name">Telescope</string>
 
-  <string name="drawer_close">Close</string>
-  <string name="drawer_open">Open</string>
-
-  <string-array name="navigation">
-    <item>Default</item>
-    <item>Device Info</item>
-    <item>Styled</item>
-    <item>Children Only</item>
-    <item>Three Finger</item>
-    <item>Other Target</item>
-    <item>Additional Attachment</item>
-  </string-array>
+  <string name="tab_default">Default</string>
+  <string name="tab_device_info">Device Info</string>
+  <string name="tab_styled">Styled</string>
+  <string name="tab_children_only">Children Only</string>
+  <string name="tab_three_finger">Three Finger</string>
+  <string name="tab_other_target">Other Target</string>
+  <string name="tab_additional_attachment">Additional Attachment</string>
 
   <string name="additional_attachment_description">
     The provided email launcher can be configured to attach another file. In this example, we
