@@ -22,7 +22,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.os.Looper;
 import android.os.Process;
 import android.os.Vibrator;
 import android.util.AttributeSet;
@@ -627,6 +626,15 @@ public class TelescopeLayout extends FrameLayout {
                   }
                 });
               }
+            } catch (UnsupportedOperationException e) {
+              Log.e(TAG,
+                  "Failed to capture system screenshot. Setting the screenshot mode to CANVAS.", e);
+              setScreenshotMode(ScreenshotMode.CANVAS);
+              post(new Runnable() {
+                @Override public void run() {
+                  captureCanvasScreenshot();
+                }
+              });
             } catch (IOException e) {
               Log.e(TAG,
                   "Failed to save screenshot. Is the WRITE_EXTERNAL_STORAGE permission requested?");
