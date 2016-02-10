@@ -4,15 +4,15 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 import android.widget.Toast;
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import com.mattprecious.telescope.Lens;
 import com.mattprecious.telescope.TelescopeLayout;
 import com.mattprecious.telescope.sample.R;
 import java.io.File;
 
 public class SampleToastView extends FrameLayout {
-  @InjectView(R.id.telescope) TelescopeLayout telescopeView;
+  @Bind(R.id.telescope) TelescopeLayout telescopeView;
 
   public SampleToastView(Context context, AttributeSet attrs) {
     super(context, attrs);
@@ -20,7 +20,7 @@ public class SampleToastView extends FrameLayout {
 
   @Override protected void onFinishInflate() {
     super.onFinishInflate();
-    ButterKnife.inject(this);
+    ButterKnife.bind(this);
 
     telescopeView.setLens(new Lens() {
       @Override public void onCapture(File screenshot) {

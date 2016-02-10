@@ -1,73 +1,58 @@
 package com.mattprecious.telescope.sample;
 
-import android.app.ActionBar;
-import android.app.Activity;
-import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
+import android.support.annotation.LayoutRes;
+import android.support.annotation.StringRes;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.OnItemClick;
 import com.mattprecious.telescope.TelescopeLayout;
+import java.util.ArrayList;
+import java.util.List;
 
-public class SampleActivity extends Activity {
-  private static final int PAGE_DEFAULT = 0;
-  private static final int PAGE_DEVICE_INFO = 1;
-  private static final int PAGE_STYLED = 2;
-  private static final int PAGE_CHILDREN_ONLY = 3;
-  private static final int PAGE_THREE_FINGER = 4;
-  private static final int PAGE_OTHER_TARGET = 5;
-  private static final int PAGE_ADDITIONAL_ATTACHMENT = 6;
+public class SampleActivity extends AppCompatActivity {
+  @Bind(R.id.tabs) TabLayout tabsView;
+  @Bind(R.id.pager) ViewPager pagerView;
 
-  @InjectView(R.id.drawer) DrawerLayout drawerView;
-  @InjectView(R.id.drawer_list) ListView drawerListView;
-  @InjectView(R.id.content) ViewGroup contentView;
-
-  private ActionBarDrawerToggle drawerToggle;
-
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
+  @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.sample_activity);
-    ButterKnife.inject(this);
+    ButterKnife.bind(this);
 
-    getActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE);
-    getActionBar().setDisplayHomeAsUpEnabled(true);
-    getActionBar().setHomeButtonEnabled(true);
+    Adapter adapter = new Adapter(this);
+    adapter.addView(R.layout.default_view, R.string.tab_default);
+    adapter.addView(R.layout.device_info_view, R.string.tab_device_info);
+    adapter.addView(R.layout.styled_view, R.string.tab_styled);
+    adapter.addView(R.layout.children_only_view, R.string.tab_children_only);
+    adapter.addView(R.layout.three_finger_view, R.string.tab_three_finger);
+    adapter.addView(R.layout.other_target_view, R.string.tab_other_target);
+    adapter.addView(R.layout.additional_attachment_view, R.string.tab_additional_attachment);
 
-    drawerToggle =
-        new ActionBarDrawerToggle(this, drawerView, R.drawable.ic_drawer, R.string.drawer_open,
-            R.string.drawer_close);
-    drawerView.setDrawerListener(drawerToggle);
-    drawerView.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-
-    drawerListView.setAdapter(
-        ArrayAdapter.createFromResource(this, R.array.navigation, R.layout.drawer_item_view));
-
-    onItemClick(0);
+    pagerView.setAdapter(adapter);
+    tabsView.setupWithViewPager(pagerView);
   }
 
   @Override protected void onPostCreate(Bundle savedInstanceState) {
     super.onPostCreate(savedInstanceState);
-    drawerToggle.syncState();
   }
 
   @Override public void onConfigurationChanged(Configuration newConfig) {
     super.onConfigurationChanged(newConfig);
-    drawerToggle.onConfigurationChanged(newConfig);
   }
 
   @Override protected void onDestroy() {
@@ -75,58 +60,18 @@ public class SampleActivity extends Activity {
     TelescopeLayout.cleanUp(this);
   }
 
-  @OnItemClick(R.id.drawer_list) void onItemClick(int position) {
-    View view;
-    switch (position) {
-      case PAGE_DEFAULT:
-        view = getLayoutInflater().inflate(R.layout.default_view, contentView, false);
-        break;
-      case PAGE_DEVICE_INFO:
-        view = getLayoutInflater().inflate(R.layout.device_info_view, contentView, false);
-        break;
-      case PAGE_STYLED:
-        view = getLayoutInflater().inflate(R.layout.styled_view, contentView, false);
-        break;
-      case PAGE_CHILDREN_ONLY:
-        view = getLayoutInflater().inflate(R.layout.children_only_view, contentView, false);
-        break;
-      case PAGE_THREE_FINGER:
-        view = getLayoutInflater().inflate(R.layout.three_finger_view, contentView, false);
-        break;
-      case PAGE_OTHER_TARGET:
-        view = getLayoutInflater().inflate(R.layout.other_target_view, contentView, false);
-        break;
-      case PAGE_ADDITIONAL_ATTACHMENT:
-        view = getLayoutInflater().inflate(R.layout.additional_attachment_view, contentView, false);
-        break;
-      default:
-        throw new IllegalArgumentException("Unknown position: " + position);
-    }
-
-    drawerListView.setItemChecked(position, true);
-    swapView(view);
-    drawerView.closeDrawer(drawerListView);
-  }
-
   @Override public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.sample_menu, menu);
     return true;
   }
 
-  @Override public boolean onMenuItemSelected(int featureId, MenuItem item) {
-    if (drawerToggle.onOptionsItemSelected(item)) {
-      return true;
-    } else if (item.getItemId() == R.id.menu_attributions) {
+  @Override public boolean onOptionsItemSelected(MenuItem item) {
+    if (item.getItemId() == R.id.menu_attributions) {
       showAttributionsDialog();
       return true;
     }
 
     return false;
-  }
-
-  private void swapView(View view) {
-    contentView.removeAllViews();
-    contentView.addView(view);
   }
 
   private void showAttributionsDialog() {
@@ -143,5 +88,44 @@ public class SampleActivity extends Activity {
           }
         })
         .show();
+  }
+
+  static class Adapter extends PagerAdapter {
+    private final Context context;
+    private final LayoutInflater inflater;
+    private final List<Integer> layouts = new ArrayList<>();
+    private final List<String> titles = new ArrayList<>();
+
+    public Adapter(Context context) {
+      this.context = context;
+      inflater = LayoutInflater.from(context);
+    }
+
+    public void addView(@LayoutRes int layoutResId, @StringRes int titleResId) {
+      layouts.add(layoutResId);
+      titles.add(context.getString(titleResId));
+    }
+
+    @Override public int getCount() {
+      return layouts.size();
+    }
+
+    @Override public CharSequence getPageTitle(int position) {
+      return titles.get(position);
+    }
+
+    @Override public Object instantiateItem(ViewGroup container, int position) {
+      View view = inflater.inflate(layouts.get(position), container, false);
+      container.addView(view);
+      return view;
+    }
+
+    @Override public void destroyItem(ViewGroup container, int position, Object object) {
+      container.removeView((View) object);
+    }
+
+    @Override public boolean isViewFromObject(View view, Object object) {
+      return view == object;
+    }
   }
 }

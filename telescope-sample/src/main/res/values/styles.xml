@@ -2,7 +2,9 @@
 <resources>
   <style name="None"></style>
 
-  <style name="Theme.Telescope" parent="android:Theme.Holo.Light"></style>
+  <style name="Theme.Telescope" parent="Theme.AppCompat.Light.NoActionBar">
+    <item name="colorAccent">#2196f3</item>
+  </style>
 
   <style name="Widget.Telescope.Description" parent="None">
     <item name="android:lineSpacingMultiplier">1.2</item>

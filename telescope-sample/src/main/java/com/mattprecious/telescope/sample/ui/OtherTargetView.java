@@ -3,11 +3,11 @@ package com.mattprecious.telescope.sample.ui;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
-import butterknife.InjectView;
+import butterknife.Bind;
 import com.mattprecious.telescope.sample.R;
 
 public class OtherTargetView extends SampleEmailView {
-  @InjectView(R.id.target) View targetView;
+  @Bind(R.id.target) View targetView;
 
   public OtherTargetView(Context context, AttributeSet attrs) {
     super(context, attrs);

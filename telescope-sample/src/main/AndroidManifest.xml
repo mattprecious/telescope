@@ -7,13 +7,13 @@
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
   <uses-sdk
-      android:minSdkVersion="14"
-      android:targetSdkVersion="19"
+      android:minSdkVersion="17"
+      android:targetSdkVersion="23"
       />
 
   <application
       android:label="@string/application_name"
-      android:icon="@drawable/application_icon"
+      android:icon="@mipmap/ic_launcher"
       android:theme="@style/Theme.Telescope"
       android:allowBackup="true"
       >
