@@ -5,6 +5,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.TypedArray;
@@ -398,7 +399,10 @@ public class TelescopeLayout extends FrameLayout {
 
     switch (screenshotMode) {
       case SYSTEM:
-        if (projectionManager != null && !screenshotChildrenOnly && screenshotTarget == this) {
+        if (projectionManager != null
+            && !screenshotChildrenOnly
+            && screenshotTarget == this
+            && !windowHasSecureFlag()) {
           // Take a full screenshot of the device. Request permission first.
           registerRequestCaptureReceiver();
           getContext().startActivity(new Intent(getContext(), RequestCaptureActivity.class));
@@ -415,6 +419,23 @@ public class TelescopeLayout extends FrameLayout {
       default:
         throw new IllegalStateException("Unknown screenshot mode: " + screenshotMode);
     }
+  }
+
+  private boolean windowHasSecureFlag() {
+    // Find an activity.
+    Context context = getContext();
+    while (!(context instanceof Activity) && context instanceof ContextWrapper) {
+      context = ((ContextWrapper) context).getBaseContext();
+    }
+
+    //noinspection SimplifiableIfStatement
+    if (context instanceof Activity) {
+      return (((Activity) context).getWindow().getAttributes().flags
+          & WindowManager.LayoutParams.FLAG_SECURE) != 0;
+    }
+
+    // If we can't find an activity, return true so we fall back to canvas screenshots.
+    return true;
   }
 
   private void captureCanvasScreenshot() {
