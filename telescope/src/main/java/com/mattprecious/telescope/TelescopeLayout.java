@@ -442,6 +442,12 @@ public class TelescopeLayout extends FrameLayout {
     return true;
   }
 
+  private void checkLens() {
+    if (lens == null) {
+      throw new IllegalStateException("Must call setLens() before capturing a screenshot.");
+    }
+  }
+
   private void captureCanvasScreenshot() {
     capturingStart();
 
@@ -451,15 +457,16 @@ public class TelescopeLayout extends FrameLayout {
         View view = getTargetView();
         view.setDrawingCacheEnabled(true);
         Bitmap screenshot = Bitmap.createBitmap(view.getDrawingCache());
-        if (lens != null) {
-          lens.onCapture(screenshot, new BitmapProcessorListener() {
-            @Override public void onBitmapReady(Bitmap screenshot) {
-              capturingEnd();
-              new SaveScreenshotTask(screenshot).execute();
-            }
-          });
-        }
         view.setDrawingCacheEnabled(false);
+
+        capturingEnd();
+
+        checkLens();
+        lens.onCapture(screenshot, new BitmapProcessorListener() {
+          @Override public void onBitmapReady(Bitmap screenshot) {
+            new SaveScreenshotTask(screenshot).execute();
+          }
+        });
       }
     });
   }
@@ -556,9 +563,8 @@ public class TelescopeLayout extends FrameLayout {
     @Override protected void onPostExecute(File screenshot) {
       saving = false;
 
-      if (lens != null) {
-        lens.onCapture(screenshot);
-      }
+      checkLens();
+      lens.onCapture(screenshot);
     }
   }
 
@@ -603,8 +609,6 @@ public class TelescopeLayout extends FrameLayout {
           @Override public void onImageAvailable(ImageReader reader) {
             Image image = null;
             Bitmap bitmap = null;
-            Bitmap croppedBitmap = null;
-            FileOutputStream out = null;
 
             try {
               image = reader.acquireLatestImage();
@@ -632,25 +636,14 @@ public class TelescopeLayout extends FrameLayout {
               bitmap.copyPixelsFromBuffer(buffer);
 
               // Trim the screenshot to the correct size.
-              croppedBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height);
+              final Bitmap croppedBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height);
 
-              screenshotFolder.mkdirs();
-
-              final File file =
-                  new File(screenshotFolder, SCREENSHOT_FILE_FORMAT.format(new Date()));
-              out = new FileOutputStream(file);
-
-              croppedBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-              out.flush();
-
-              saving = false;
-              if (lens != null) {
-                post(new Runnable() {
-                  @Override public void run() {
-                    lens.onCapture(file);
-                  }
-                });
-              }
+              checkLens();
+              lens.onCapture(croppedBitmap, new BitmapProcessorListener() {
+                @Override public void onBitmapReady(Bitmap screenshot) {
+                  new SaveScreenshotTask(croppedBitmap).execute();
+                }
+              });
             } catch (UnsupportedOperationException e) {
               Log.e(TAG,
                   "Failed to capture system screenshot. Setting the screenshot mode to CANVAS.", e);
@@ -660,21 +653,7 @@ public class TelescopeLayout extends FrameLayout {
                   captureCanvasScreenshot();
                 }
               });
-            } catch (IOException e) {
-              Log.e(TAG,
-                  "Failed to save screenshot. Is the WRITE_EXTERNAL_STORAGE permission requested?");
             } finally {
-              if (out != null) {
-                try {
-                  out.close();
-                } catch (IOException ignored) {
-                }
-              }
-
-              if (croppedBitmap != null) {
-                croppedBitmap.recycle();
-              }
-
               if (bitmap != null) {
                 bitmap.recycle();
               }
