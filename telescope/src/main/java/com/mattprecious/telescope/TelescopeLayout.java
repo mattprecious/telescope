@@ -25,6 +25,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Process;
 import android.os.Vibrator;
+import android.support.annotation.ColorInt;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
@@ -247,7 +248,7 @@ public class TelescopeLayout extends FrameLayout {
   }
 
   /** Set the color of the progress bars. */
-  public void setProgressColor(int progressColor) {
+  public void setProgressColor(@ColorInt int progressColor) {
     progressPaint.setColor(progressColor);
   }
 
