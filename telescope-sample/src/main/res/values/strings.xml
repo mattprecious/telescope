@@ -9,6 +9,7 @@
   <string name="tab_three_finger">Three Finger</string>
   <string name="tab_other_target">Other Target</string>
   <string name="tab_additional_attachment">Additional Attachment</string>
+  <string name="tab_maps">Maps</string>
 
   <string name="additional_attachment_description">
     The provided email launcher can be configured to attach another file. In this example, we
@@ -37,6 +38,10 @@
   <string name="other_target_description">
     Telescope can be configured to take a screenshot of a different view. In this example, long
     press this container to take a screenshot of the view below.
+  </string>
+  <string name="maps_three_finger_description">
+    Google Maps use two-finger gestures for pan and zooming. Three-finger press is required for this
+    example.
   </string>
 
   <string name="attributions"><![CDATA[

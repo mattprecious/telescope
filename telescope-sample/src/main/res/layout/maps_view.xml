@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.mattprecious.telescope.sample.ui.SampleMapsView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+  <com.mattprecious.telescope.TelescopeLayout
+      android:id="@+id/telescope"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      app:telescope_pointerCount="3"
+      app:telescope_screenshotMode="canvas"
+      >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+      <TextView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:text="@string/maps_three_finger_description"
+          style="@style/Widget.Telescope.Description"
+          />
+      <com.google.android.gms.maps.MapView
+          android:id="@+id/map"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          />
+    </LinearLayout>
+  </com.mattprecious.telescope.TelescopeLayout>
+</com.mattprecious.telescope.sample.ui.SampleMapsView>
