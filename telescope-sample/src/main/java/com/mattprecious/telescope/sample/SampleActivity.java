@@ -42,6 +42,7 @@ public class SampleActivity extends AppCompatActivity {
     adapter.addView(R.layout.three_finger_view, R.string.tab_three_finger);
     adapter.addView(R.layout.other_target_view, R.string.tab_other_target);
     adapter.addView(R.layout.additional_attachment_view, R.string.tab_additional_attachment);
+    adapter.addView(R.layout.maps_view, R.string.tab_maps);
 
     pagerView.setAdapter(adapter);
     tabsView.setupWithViewPager(pagerView);
