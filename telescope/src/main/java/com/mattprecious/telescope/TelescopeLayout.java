@@ -84,7 +84,6 @@ public class TelescopeLayout extends FrameLayout {
   private final BroadcastReceiver requestCaptureReceiver;
 
   private final float halfStrokeWidth;
-  private final File screenshotFolder;
   private final Paint progressPaint;
   private final ValueAnimator progressAnimator;
   private final ValueAnimator progressCancelAnimator;
@@ -168,7 +167,6 @@ public class TelescopeLayout extends FrameLayout {
       projectionManager = null;
       windowManager = null;
       vibrator = null;
-      screenshotFolder = null;
       requestCaptureFilter = null;
       requestCaptureReceiver = null;
       return;
@@ -176,7 +174,6 @@ public class TelescopeLayout extends FrameLayout {
 
     windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
     vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-    screenshotFolder = getScreenshotFolder(context);
 
     if (SDK_INT < LOLLIPOP) {
       projectionManager = null;
@@ -541,9 +538,11 @@ public class TelescopeLayout extends FrameLayout {
    * listener.
    */
   private class SaveScreenshotTask extends AsyncTask<Void, Void, File> {
+    private final Context context;
     private final Bitmap screenshot;
 
     private SaveScreenshotTask(Bitmap screenshot) {
+      this.context = getContext();
       this.screenshot = screenshot;
     }
 
@@ -557,6 +556,7 @@ public class TelescopeLayout extends FrameLayout {
       }
 
       try {
+        File screenshotFolder = getScreenshotFolder(context);
         screenshotFolder.mkdirs();
 
         File file = new File(screenshotFolder, SCREENSHOT_FILE_FORMAT.format(new Date()));
