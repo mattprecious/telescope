@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <public name="telescope_pointerCount" type="attr"/>
+  <public name="telescope_progressColor" type="attr"/>
+  <public name="telescope_screenshotMode" type="attr"/>
+  <public name="telescope_screenshotChildrenOnly" type="attr"/>
+  <public name="telescope_vibrate" type="attr"/>
+</resources>
