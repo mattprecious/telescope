@@ -20,7 +20,7 @@
  * http://b.android.com/67171 and http://b.android.com/184603.
  */
 
-package com.mattprecious.telescope.support;
+package com.mattprecious.telescope;
 
 import static org.xmlpull.v1.XmlPullParser.END_DOCUMENT;
 import static org.xmlpull.v1.XmlPullParser.START_TAG;
@@ -306,7 +306,7 @@ import java.util.Map;
  * URIs</a>.
  * </p>
  */
-public class FileProvider extends ContentProvider {
+class FileProvider extends ContentProvider {
   private static final String[] COLUMNS = {
       OpenableColumns.DISPLAY_NAME, OpenableColumns.SIZE
   };

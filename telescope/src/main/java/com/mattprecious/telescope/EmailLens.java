@@ -3,7 +3,6 @@ package com.mattprecious.telescope;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import com.mattprecious.telescope.support.FileProvider;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;

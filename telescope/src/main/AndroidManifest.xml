@@ -17,7 +17,7 @@
         android:authorities="${applicationId}.telescope.fileprovider"
         android:exported="false"
         android:grantUriPermissions="true"
-        android:name="com.mattprecious.telescope.support.FileProvider"
+        android:name="com.mattprecious.telescope.FileProvider"
         >
       <meta-data
           android:name="android.support.FILE_PROVIDER_PATHS"
