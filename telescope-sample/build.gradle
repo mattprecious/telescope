@@ -1,6 +1,6 @@
 buildscript {
   dependencies {
-    classpath 'com.android.tools.build:gradle:1.5.0'
+    classpath 'com.android.tools.build:gradle:2.1.0'
   }
 }
 
@@ -9,16 +9,16 @@ apply plugin: 'com.android.application'
 dependencies {
   compile project(':telescope')
 
-  compile 'com.android.support:support-v4:23.1.1'
-  compile 'com.android.support:appcompat-v7:23.1.1'
-  compile 'com.android.support:design:23.1.1'
+  compile 'com.android.support:support-v4:23.4.0'
+  compile 'com.android.support:appcompat-v7:23.4.0'
+  compile 'com.android.support:design:23.4.0'
   compile 'com.google.android.gms:play-services-maps:8.4.0'
   compile 'com.jakewharton:butterknife:7.0.1'
 }
 
 android {
   compileSdkVersion 23
-  buildToolsVersion "23.0.2"
+  buildToolsVersion "23.0.3"
 
   defaultConfig {
     versionName VERSION_NAME

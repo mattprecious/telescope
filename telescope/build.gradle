@@ -1,6 +1,6 @@
 buildscript {
   dependencies {
-    classpath 'com.android.tools.build:gradle:1.5.0'
+    classpath 'com.android.tools.build:gradle:2.1.0'
   }
 }
 
@@ -8,7 +8,7 @@ apply plugin: 'com.android.library'
 
 android {
   compileSdkVersion 23
-  buildToolsVersion '23.0.2'
+  buildToolsVersion '23.0.3'
 
   defaultConfig {
     versionName VERSION_NAME
@@ -23,7 +23,7 @@ android {
 }
 
 dependencies {
-  compile 'com.android.support:support-annotations:23.1.1'
+  compile 'com.android.support:support-annotations:23.4.0'
 }
 
 apply from: 'gradle-mvn-push.gradle'
