@@ -21,6 +21,7 @@ android {
   buildToolsVersion "23.0.3"
 
   defaultConfig {
+    applicationId 'com.mattprecious.telescope.sample'
     versionName VERSION_NAME
   }
 

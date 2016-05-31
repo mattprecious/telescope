@@ -13,6 +13,17 @@
         android:exported="false"
         android:theme="@android:style/Theme.Translucent.NoTitleBar"
         />
+    <provider
+        android:authorities="${applicationId}.telescope.fileprovider"
+        android:exported="false"
+        android:grantUriPermissions="true"
+        android:name="com.mattprecious.telescope.support.FileProvider"
+        >
+      <meta-data
+          android:name="android.support.FILE_PROVIDER_PATHS"
+          android:resource="@xml/telescope_file_paths"
+          />
+    </provider>
   </application>
 
 </manifest>
