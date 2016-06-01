@@ -3,7 +3,6 @@ package com.mattprecious.telescope;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import com.mattprecious.telescope.support.FileProvider;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -62,8 +61,7 @@ public class EmailLens extends Lens {
       attachments.addAll(additionalAttachments);
     }
     if (screenshot != null) {
-      attachments.add(FileProvider.getUriForFile(context, //
-          context.getPackageName() + ".telescope.fileprovider", screenshot));
+      attachments.add(TelescopeFileProvider.getUriForFile(context, screenshot));
     }
 
     if (!attachments.isEmpty()) {
