@@ -541,7 +541,7 @@ public class TelescopeLayout extends FrameLayout {
     private final Context context;
     private final Bitmap screenshot;
 
-    private SaveScreenshotTask(Bitmap screenshot) {
+    SaveScreenshotTask(Bitmap screenshot) {
       this.context = getContext();
       this.screenshot = screenshot;
     }
