@@ -1,6 +1,14 @@
 Change Log
 ==========
 
+Version 2.1.0 *(2016-06-01)*
+----------------------------
+
+* Moved anything that touches the disk to a background thread.
+* `EmailLens` now shares screenshots using a `content://` URI instead of `file://`
+* Added `TelescopeFileProvider` for use in custom lenses that allows you to easily create a
+`content://` URI for sharing screenshots. See `EmailLens` for an example.
+
 Version 2.0.0 *(2016-02-10)*
 ----------------------------
 
