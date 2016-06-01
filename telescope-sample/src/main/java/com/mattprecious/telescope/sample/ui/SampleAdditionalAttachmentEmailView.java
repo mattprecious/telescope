@@ -53,6 +53,7 @@ public class SampleAdditionalAttachmentEmailView extends FrameLayout {
     telescopeView.setLens(
         new EmailLens(getContext(), "Bug report", "bugs@blackhole.io") {
           @Override protected Set<Uri> getAdditionalAttachments() {
+            // TODO: This should be using a FileProvider.
             return Collections.singleton(Uri.fromFile(file));
           }
         }
