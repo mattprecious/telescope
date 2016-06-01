@@ -12,7 +12,10 @@ Version 2.1.0 *(2016-06-01)*
 Version 2.0.0 *(2016-02-10)*
 ----------------------------
 
-* Screenshots will now be captured natively on API 21+. This method will capture the entire screen including status bar, navigation bar, and any surface views that didn't work using the old method (ex: `MapView`). The old method can be forced by setting the screenshot mode to `ScreenshotMode.CANVAS`.
+* Screenshots will now be captured natively on API 21+. This method will capture the entire screen
+including status bar, navigation bar, and any surface views that didn't work using the old method
+(ex: `MapView`). The old method can be forced by setting the screenshot mode to
+`ScreenshotMode.CANVAS`.
 * Disabling of screenshots has been moved to `ScreenshotMode.NONE`.
 * `Lens` has been changed from an interface to an abstract class.
 * A new method has been added to `Lens` to optionally pre-process the screenshot before saving.
