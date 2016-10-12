@@ -107,16 +107,21 @@ public class EmailDeviceInfoLens extends EmailLens {
         return "ldpi";
       case DisplayMetrics.DENSITY_MEDIUM:
         return "mdpi";
-      case DisplayMetrics.DENSITY_HIGH:
-        return "hdpi";
-      case DisplayMetrics.DENSITY_XHIGH:
-        return "xhdpi";
-      case DisplayMetrics.DENSITY_XXHIGH:
-        return "xxhdpi";
-      case DisplayMetrics.DENSITY_XXXHIGH:
-        return "xxxhdpi";
       case DisplayMetrics.DENSITY_TV:
         return "tvdpi";
+      case DisplayMetrics.DENSITY_HIGH:
+        return "hdpi";
+      case DisplayMetrics.DENSITY_280:
+      case DisplayMetrics.DENSITY_XHIGH:
+        return "xhdpi";
+      case DisplayMetrics.DENSITY_360:
+      case DisplayMetrics.DENSITY_400:
+      case DisplayMetrics.DENSITY_420:
+      case DisplayMetrics.DENSITY_XXHIGH:
+        return "xxhdpi";
+      case DisplayMetrics.DENSITY_560:
+      case DisplayMetrics.DENSITY_XXXHIGH:
+        return "xxxhdpi";
       default:
         return "unknown";
     }
