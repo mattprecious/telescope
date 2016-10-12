@@ -430,6 +430,7 @@ public class TelescopeLayout extends FrameLayout {
         captureCanvasScreenshot();
         break;
       case NONE:
+        doneAnimator.start();
         new SaveScreenshotTask(null).execute();
         break;
       default:
