@@ -11,6 +11,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
@@ -33,6 +34,8 @@ public class SampleActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.sample_activity);
     ButterKnife.bind(this);
+
+    setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
     Adapter adapter = new Adapter(this);
     adapter.addView(R.layout.default_view, R.string.tab_default);
