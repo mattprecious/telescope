@@ -1,10 +1,12 @@
 package com.mattprecious.telescope;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.annotation.WorkerThread;
+import android.widget.Toast;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -92,7 +94,12 @@ public class EmailLens extends Lens {
     }
 
     @Override protected void onPostExecute(Intent intent) {
-      context.startActivity(intent);
+      try {
+        context.startActivity(intent);
+      } catch (ActivityNotFoundException e) {
+        Toast.makeText(context, "\uD83D\uDD2D No email apps installed!", Toast.LENGTH_SHORT)
+            .show();
+      }
     }
   }
 }
