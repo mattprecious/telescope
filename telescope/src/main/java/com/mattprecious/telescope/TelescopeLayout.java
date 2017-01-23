@@ -37,6 +37,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -556,21 +557,31 @@ public class TelescopeLayout extends FrameLayout {
         return null;
       }
 
-      try {
-        File screenshotFolder = getScreenshotFolder(context);
-        screenshotFolder.mkdirs();
-
-        File file = new File(screenshotFolder, SCREENSHOT_FILE_FORMAT.format(new Date()));
-        FileOutputStream out = new FileOutputStream(file);
-
-        screenshot.compress(Bitmap.CompressFormat.PNG, 100, out);
-        out.flush();
-        out.close();
-
-        return file;
-      } catch (IOException e) {
+      File screenshotFolder = getScreenshotFolder(context);
+      if (!screenshotFolder.mkdirs()) {
         Log.e(TAG,
             "Failed to save screenshot. Is the WRITE_EXTERNAL_STORAGE permission requested?");
+        return null;
+      }
+
+      File file = new File(screenshotFolder, SCREENSHOT_FILE_FORMAT.format(new Date()));
+      FileOutputStream out;
+      try {
+        out = new FileOutputStream(file);
+      } catch (FileNotFoundException e) {
+        throw new AssertionError(e);
+      }
+      try {
+        screenshot.compress(Bitmap.CompressFormat.PNG, 100, out);
+        out.flush();
+        return file;
+      } catch (IOException e) {
+        Log.e(TAG, "Failed to save screenshot.");
+      } finally {
+        try {
+          out.close();
+        } catch (IOException ignored) {
+        }
       }
 
       return null;
