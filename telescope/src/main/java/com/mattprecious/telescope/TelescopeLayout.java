@@ -28,6 +28,7 @@ import android.os.Vibrator;
 import android.support.annotation.ColorInt;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -414,29 +415,36 @@ public class TelescopeLayout extends FrameLayout {
       vibrator.vibrate(VIBRATION_DURATION_MS);
     }
 
-    switch (screenshotMode) {
-      case SYSTEM:
-        if (projectionManager != null
-            && !screenshotChildrenOnly
-            && screenshotTarget == this
-            && !windowHasSecureFlag()) {
-          // Take a full screenshot of the device. Request permission first.
-          registerRequestCaptureReceiver();
-          getContext().startActivity(new Intent(getContext(), RequestCaptureActivity.class));
-          break;
+    lens.onTrigger(new TriggerProcessorListener() {
+      @Override public void onTriggerReady(@Nullable ScreenshotMode screenshotMode) {
+        if (screenshotMode == null) {
+          screenshotMode = TelescopeLayout.this.screenshotMode;
         }
+        switch (screenshotMode) {
+          case SYSTEM:
+            if (projectionManager != null
+                && !screenshotChildrenOnly
+                && screenshotTarget == TelescopeLayout.this
+                && !windowHasSecureFlag()) {
+              // Take a full screenshot of the device. Request permission first.
+              registerRequestCaptureReceiver();
+              getContext().startActivity(new Intent(getContext(), RequestCaptureActivity.class));
+              break;
+            }
 
-        // System was requested but isn't supported. Fall through.
-      case CANVAS:
-        captureCanvasScreenshot();
-        break;
-      case NONE:
-        doneAnimator.start();
-        new SaveScreenshotTask(null).execute();
-        break;
-      default:
-        throw new IllegalStateException("Unknown screenshot mode: " + screenshotMode);
-    }
+            // System was requested but isn't supported. Fall through.
+          case CANVAS:
+            captureCanvasScreenshot();
+            break;
+          case NONE:
+            doneAnimator.start();
+            new SaveScreenshotTask(null).execute();
+            break;
+          default:
+            throw new IllegalStateException("Unknown screenshot mode: " + screenshotMode);
+        }
+      }
+    });
   }
 
   private boolean windowHasSecureFlag() {
