@@ -11,7 +11,7 @@ import java.io.File;
  */
 public abstract class Lens {
   public void onTrigger(@NonNull TriggerProcessorListener listener) {
-    listener.onTriggerReady(null);
+    listener.onTriggerReady();
   }
 
   /**

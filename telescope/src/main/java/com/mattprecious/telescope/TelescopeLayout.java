@@ -28,7 +28,6 @@ import android.os.Vibrator;
 import android.support.annotation.ColorInt;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -416,7 +415,7 @@ public class TelescopeLayout extends FrameLayout {
     }
 
     lens.onTrigger(new TriggerProcessorListener() {
-      @Override public void onTriggerReady(@Nullable ScreenshotMode screenshotMode) {
+      @Override public void onTriggerReady() {
         if (screenshotMode == null) {
           screenshotMode = TelescopeLayout.this.screenshotMode;
         }

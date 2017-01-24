@@ -1,9 +1,7 @@
 package com.mattprecious.telescope;
 
-import android.support.annotation.Nullable;
-
 public abstract class TriggerProcessorListener {
-  public abstract void onTriggerReady(@Nullable ScreenshotMode screenshotMode);
+  public abstract void onTriggerReady();
 
   TriggerProcessorListener() {
     // No external subclasses.
