@@ -558,7 +558,7 @@ public class TelescopeLayout extends FrameLayout {
       }
 
       File screenshotFolder = getScreenshotFolder(context);
-      if (!screenshotFolder.mkdirs()) {
+      if (!screenshotFolder.exists() && !screenshotFolder.mkdirs()) {
         Log.e(TAG,
             "Failed to save screenshot. Is the WRITE_EXTERNAL_STORAGE permission requested?");
         return null;
