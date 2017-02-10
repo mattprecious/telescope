@@ -542,6 +542,7 @@ public class TelescopeLayout extends FrameLayout {
   private class SaveScreenshotTask extends AsyncTask<Void, Void, File> {
     private final Context context;
     private final Bitmap screenshot;
+    private String fileName;
 
     SaveScreenshotTask(Bitmap screenshot) {
       this.context = getContext();
@@ -550,6 +551,7 @@ public class TelescopeLayout extends FrameLayout {
 
     @Override protected void onPreExecute() {
       saving = true;
+      fileName = SCREENSHOT_FILE_FORMAT.format(new Date());
     }
 
     @Override protected File doInBackground(Void... params) {
@@ -564,7 +566,7 @@ public class TelescopeLayout extends FrameLayout {
         return null;
       }
 
-      File file = new File(screenshotFolder, SCREENSHOT_FILE_FORMAT.format(new Date()));
+      File file = new File(screenshotFolder, fileName);
       FileOutputStream out;
       try {
         out = new FileOutputStream(file);
