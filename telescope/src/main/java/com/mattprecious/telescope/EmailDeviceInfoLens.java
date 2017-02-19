@@ -86,7 +86,7 @@ public class EmailDeviceInfoLens extends EmailLens {
     info.putAll(getInfo());
 
     StringBuilder builder = new StringBuilder();
-    for (Map.Entry entry : info.entrySet()) {
+    for (Map.Entry<String, String> entry : info.entrySet()) {
       builder.append(entry.getKey()).append(": ").append(entry.getValue()).append('\n');
     }
 
