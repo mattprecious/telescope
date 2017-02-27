@@ -59,7 +59,7 @@ import static com.mattprecious.telescope.Preconditions.checkNotNull;
  */
 public class TelescopeLayout extends FrameLayout {
   private static final String TAG = "Telescope";
-  private static final SimpleDateFormat SCREENSHOT_FILE_FORMAT =
+  static final SimpleDateFormat SCREENSHOT_FILE_FORMAT =
       new SimpleDateFormat("'telescope'-yyyy-MM-dd-HHmmss.'png'", Locale.US);
   private static final int PROGRESS_STROKE_DP = 4;
   private static final long CANCEL_DURATION_MS = 250;
@@ -72,8 +72,8 @@ public class TelescopeLayout extends FrameLayout {
 
   private static Handler backgroundHandler;
 
-  private final MediaProjectionManager projectionManager;
-  private final WindowManager windowManager;
+  final MediaProjectionManager projectionManager;
+  final WindowManager windowManager;
   private final Vibrator vibrator;
   private final Handler handler = new Handler();
   private final Runnable trigger = new Runnable() {
@@ -90,7 +90,7 @@ public class TelescopeLayout extends FrameLayout {
   private final ValueAnimator progressCancelAnimator;
   private final ValueAnimator doneAnimator;
 
-  private Lens lens;
+  Lens lens;
   private View screenshotTarget;
   private int pointerCount;
   private ScreenshotMode screenshotMode;
@@ -98,11 +98,11 @@ public class TelescopeLayout extends FrameLayout {
   private boolean vibrate;
 
   // State.
-  private float progressFraction;
-  private float doneFraction;
+  float progressFraction;
+  float doneFraction;
   private boolean pressing;
   private boolean capturing;
-  private boolean saving;
+  boolean saving;
 
   public TelescopeLayout(Context context) {
     this(context, null);
@@ -407,7 +407,7 @@ public class TelescopeLayout extends FrameLayout {
     handler.removeCallbacks(trigger);
   }
 
-  private void trigger() {
+  void trigger() {
     stop();
 
     if (vibrate && hasVibratePermission(getContext())) {
@@ -456,13 +456,13 @@ public class TelescopeLayout extends FrameLayout {
     return true;
   }
 
-  private void checkLens() {
+  void checkLens() {
     if (lens == null) {
       throw new IllegalStateException("Must call setLens() before capturing a screenshot.");
     }
   }
 
-  private void captureCanvasScreenshot() {
+  void captureCanvasScreenshot() {
     capturingStart();
 
     // Wait for the next frame to be sure our progress bars are hidden.
@@ -493,7 +493,7 @@ public class TelescopeLayout extends FrameLayout {
     invalidate();
   }
 
-  private void capturingEnd() {
+  void capturingEnd() {
     capturing = false;
     doneAnimator.start();
   }
@@ -502,7 +502,7 @@ public class TelescopeLayout extends FrameLayout {
    * Unless {@code screenshotChildrenOnly} is true, navigate up the layout hierarchy until we find
    * the root view.
    */
-  private View getTargetView() {
+  View getTargetView() {
     View view = screenshotTarget;
     if (!screenshotChildrenOnly) {
       while (view.getRootView() != view) {
@@ -527,7 +527,7 @@ public class TelescopeLayout extends FrameLayout {
     file.delete();
   }
 
-  private static File getScreenshotFolder(Context context) {
+  static File getScreenshotFolder(Context context) {
     return new File(context.getExternalFilesDir(null), "telescope");
   }
 
@@ -601,11 +601,11 @@ public class TelescopeLayout extends FrameLayout {
     getContext().registerReceiver(requestCaptureReceiver, requestCaptureFilter);
   }
 
-  private void unregisterRequestCaptureReceiver() {
+  void unregisterRequestCaptureReceiver() {
     getContext().unregisterReceiver(requestCaptureReceiver);
   }
 
-  private static Handler getBackgroundHandler() {
+  static Handler getBackgroundHandler() {
     if (backgroundHandler == null) {
       HandlerThread backgroundThread =
           new HandlerThread("telescope", Process.THREAD_PRIORITY_BACKGROUND);
@@ -616,7 +616,7 @@ public class TelescopeLayout extends FrameLayout {
     return backgroundHandler;
   }
 
-  @TargetApi(LOLLIPOP) private void captureNativeScreenshot(final MediaProjection projection) {
+  @TargetApi(LOLLIPOP) void captureNativeScreenshot(final MediaProjection projection) {
     capturingStart();
 
     // Wait for the next frame to be sure our progress bars are hidden.
