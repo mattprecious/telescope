@@ -20,15 +20,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.mattprecious.telescope.TelescopeLayout;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SampleActivity extends AppCompatActivity {
-  @Bind(R.id.tabs) TabLayout tabsView;
-  @Bind(R.id.pager) ViewPager pagerView;
+  @BindView(R.id.tabs) TabLayout tabsView;
+  @BindView(R.id.pager) ViewPager pagerView;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
