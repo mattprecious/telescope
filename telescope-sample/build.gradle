@@ -1,6 +1,6 @@
 buildscript {
   dependencies {
-    classpath 'com.android.tools.build:gradle:2.2.3'
+    classpath 'com.android.tools.build:gradle:2.3.0'
   }
 }
 
@@ -9,17 +9,17 @@ apply plugin: 'com.android.application'
 dependencies {
   compile project(':telescope')
 
-  compile 'com.android.support:support-v4:25.1.0'
-  compile 'com.android.support:appcompat-v7:25.1.0'
-  compile 'com.android.support:design:25.1.0'
-  compile 'com.google.android.gms:play-services-maps:10.0.1'
-  compile 'com.jakewharton:butterknife:8.5.1'
-  annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
+  compile "com.android.support:support-v4:$supportLibVersion"
+  compile "com.android.support:appcompat-v7:$supportLibVersion"
+  compile "com.android.support:design:$supportLibVersion"
+  compile 'com.google.android.gms:play-services-maps:10.2.1'
+  compile "com.jakewharton:butterknife:$butterKnifeVersion"
+  annotationProcessor "com.jakewharton:butterknife-compiler:$butterKnifeVersion"
 }
 
 android {
-  compileSdkVersion 25
-  buildToolsVersion "25.0.2"
+  compileSdkVersion rootProject.ext.compileSdkVersion
+  buildToolsVersion rootProject.ext.buildToolsVersion
 
   defaultConfig {
     applicationId 'com.mattprecious.telescope.sample'
