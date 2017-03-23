@@ -4,7 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 import android.widget.Toast;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.mattprecious.telescope.Lens;
 import com.mattprecious.telescope.TelescopeLayout;
@@ -12,7 +12,7 @@ import com.mattprecious.telescope.sample.R;
 import java.io.File;
 
 public class SampleToastView extends FrameLayout {
-  @Bind(R.id.telescope) TelescopeLayout telescopeView;
+  @BindView(R.id.telescope) TelescopeLayout telescopeView;
 
   public SampleToastView(Context context, AttributeSet attrs) {
     super(context, attrs);

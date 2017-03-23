@@ -3,14 +3,14 @@ package com.mattprecious.telescope.sample.ui;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.mattprecious.telescope.EmailDeviceInfoLens;
 import com.mattprecious.telescope.TelescopeLayout;
 import com.mattprecious.telescope.sample.R;
 
 public class SampleEmailDeviceInfoView extends FrameLayout {
-  @Bind(R.id.telescope) TelescopeLayout telescopeView;
+  @BindView(R.id.telescope) TelescopeLayout telescopeView;
 
   public SampleEmailDeviceInfoView(Context context, AttributeSet attrs) {
     super(context, attrs);
