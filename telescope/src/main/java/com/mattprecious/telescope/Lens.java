@@ -10,6 +10,9 @@ import java.io.File;
  * {@link TelescopeLayout}.
  */
 public abstract class Lens {
+  public void onTrigger(@NonNull TriggerProcessorListener listener) {
+    listener.onTriggerReady();
+  }
 
   /**
    * Called when a capture is triggered but not yet saved to a {@link File}, enabling additional
