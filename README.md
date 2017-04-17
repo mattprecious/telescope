@@ -1,3 +1,5 @@
+[![Android Gems](http://www.android-gems.com/badge/mattprecious/telescope.svg?branch=master)](http://www.android-gems.com/lib/mattprecious/telescope)
+
 Telescope
 ======
 
