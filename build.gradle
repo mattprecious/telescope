@@ -1,3 +1,13 @@
+buildscript {
+  dependencies {
+    classpath 'net.ltgt.gradle:gradle-errorprone-plugin:0.0.10'
+  }
+
+  repositories {
+    maven { url 'https://plugins.gradle.org/m2/' }
+  }
+}
+
 allprojects {
   buildscript {
     repositories {
@@ -22,4 +32,13 @@ allprojects {
   version = VERSION_NAME
 
   apply plugin: 'maven'
+  apply plugin: 'net.ltgt.errorprone'
+
+  tasks.withType(JavaCompile) {
+    options.compilerArgs += ['-Xlint:all',
+                             '-Xlint:-fallthrough',
+                             '-Xlint:-deprecation',
+                             '-Xlint:-processing',
+                             '-Werror']
+  }
 }

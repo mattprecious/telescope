@@ -59,7 +59,7 @@ import static com.mattprecious.telescope.Preconditions.checkNotNull;
  */
 public class TelescopeLayout extends FrameLayout {
   private static final String TAG = "Telescope";
-  static final SimpleDateFormat SCREENSHOT_FILE_FORMAT =
+  @SuppressWarnings("SimpleDateFormatConstant") static final SimpleDateFormat SCREENSHOT_FILE_FORMAT =
       new SimpleDateFormat("'telescope'-yyyy-MM-dd-HHmmss.'png'", Locale.US);
   private static final int PROGRESS_STROKE_DP = 4;
   private static final long CANCEL_DURATION_MS = 250;

@@ -12,10 +12,12 @@ import com.mattprecious.telescope.sample.R;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.Set;
 
 public class SampleAdditionalAttachmentEmailView extends FrameLayout {
+  private static final Charset UTF_8 = Charset.forName("UTF-8");
   private static final String SHAKESPEARE = "A glooming peace this morning with it brings;\n"
       + "The sun, for sorrow, will not show his head:\n"
       + "Go hence, to have more talk of these sad things;\n"
@@ -38,7 +40,7 @@ public class SampleAdditionalAttachmentEmailView extends FrameLayout {
     FileOutputStream out = null;
     try {
       out = new FileOutputStream(file);
-      out.write(SHAKESPEARE.getBytes());
+      out.write(SHAKESPEARE.getBytes(UTF_8));
     } catch (java.io.IOException e) {
       throw new RuntimeException(e);
     } finally {
