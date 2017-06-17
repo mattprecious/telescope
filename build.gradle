@@ -1,9 +1,4 @@
 allprojects {
-  buildscript {
-    repositories {
-      jcenter()
-    }
-  }
   dependencies {
     repositories {
       mavenCentral()
