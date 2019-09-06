@@ -182,7 +182,7 @@ public class TelescopeLayout extends FrameLayout {
       requestCaptureReceiver = null;
     } else {
       projectionManager =
-          (MediaProjectionManager) context.getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+          (MediaProjectionManager) context.getApplicationContext().getSystemService(Context.MEDIA_PROJECTION_SERVICE);
 
       requestCaptureFilter =
           new IntentFilter(RequestCaptureActivity.getResultBroadcastAction(context));
