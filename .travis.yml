@@ -7,10 +7,8 @@ android:
   components:
     - tools
     - platform-tools
-    - build-tools-25.0.2
-    - android-25
-    - extra-google-m2repository
-    - extra-android-m2repository
+    - build-tools-28.0.3
+    - android-29
 
 script:
   - ./gradlew clean check

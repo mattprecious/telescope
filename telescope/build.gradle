@@ -1,6 +1,6 @@
 buildscript {
   dependencies {
-    classpath 'com.android.tools.build:gradle:2.3.0'
+    classpath 'com.android.tools.build:gradle:3.5.0'
   }
 }
 
@@ -8,10 +8,11 @@ apply plugin: 'com.android.library'
 
 android {
   compileSdkVersion rootProject.ext.compileSdkVersion
-  buildToolsVersion rootProject.ext.buildToolsVersion
 
   defaultConfig {
     versionName VERSION_NAME
+    minSdkVersion rootProject.ext.minSdkVersion
+    targetSdkVersion rootProject.ext.targetSdkVersion
   }
 
   compileOptions {
@@ -28,7 +29,7 @@ android {
 }
 
 dependencies {
-  compile "com.android.support:support-annotations:$supportLibVersion"
+  implementation "com.android.support:support-annotations:$supportLibVersion"
 }
 
 apply from: 'gradle-mvn-push.gradle'

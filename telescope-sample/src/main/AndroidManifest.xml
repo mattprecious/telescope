@@ -6,11 +6,6 @@
   <uses-permission android:name="android.permission.VIBRATE"/>
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
-  <uses-sdk
-      android:minSdkVersion="17"
-      android:targetSdkVersion="25"
-      />
-
   <uses-feature
       android:glEsVersion="0x00020000"
       android:required="true"

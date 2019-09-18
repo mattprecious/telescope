@@ -1,6 +1,7 @@
 package com.mattprecious.telescope;
 
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -410,9 +411,7 @@ public class TelescopeLayout extends FrameLayout {
   void trigger() {
     stop();
 
-    if (vibrate && hasVibratePermission(getContext())) {
-      vibrator.vibrate(VIBRATION_DURATION_MS);
-    }
+    vibrateIfNecessary();
 
     switch (screenshotMode) {
       case SYSTEM:
@@ -436,6 +435,13 @@ public class TelescopeLayout extends FrameLayout {
         break;
       default:
         throw new IllegalStateException("Unknown screenshot mode: " + screenshotMode);
+    }
+  }
+
+  @SuppressLint("MissingPermission")
+  private void vibrateIfNecessary() {
+    if (vibrate && hasVibratePermission(getContext())) {
+      vibrator.vibrate(VIBRATION_DURATION_MS);
     }
   }
 
@@ -627,6 +633,7 @@ public class TelescopeLayout extends FrameLayout {
         final int width = displayMetrics.widthPixels;
         final int height = displayMetrics.heightPixels;
 
+        @SuppressLint("WrongConstant")
         ImageReader imageReader = ImageReader.newInstance(width, height, PixelFormat.RGBA_8888, 2);
         Surface surface = imageReader.getSurface();
 
