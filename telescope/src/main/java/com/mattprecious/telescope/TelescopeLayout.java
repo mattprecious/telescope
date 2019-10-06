@@ -52,6 +52,7 @@ import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static android.graphics.Paint.Style;
 import static android.os.Build.VERSION.SDK_INT;
 import static android.os.Build.VERSION_CODES.LOLLIPOP;
+import static android.os.Build.VERSION_CODES.Q;
 import static com.mattprecious.telescope.Preconditions.checkNotNull;
 
 /**
@@ -196,22 +197,28 @@ public class TelescopeLayout extends FrameLayout {
               Activity.RESULT_CANCELED);
           Intent data = intent.getParcelableExtra(RequestCaptureActivity.RESULT_EXTRA_DATA);
 
-          final MediaProjection mediaProjection =
-              projectionManager.getMediaProjection(resultCode, data);
-          if (mediaProjection == null) {
-            captureCanvasScreenshot();
-            return;
-          }
+          if (SDK_INT < Q) {
+            // Starting from Android Q, media projections require a foreground service
+            // see https://github.com/mattprecious/telescope/issues/75
+            final MediaProjection mediaProjection =
+                    projectionManager.getMediaProjection(resultCode, data);
+            if (mediaProjection == null) {
+              captureCanvasScreenshot();
+              return;
+            }
 
-          if (intent.getBooleanExtra(RequestCaptureActivity.RESULT_EXTRA_PROMPT_SHOWN, true)) {
-            // Delay capture until after the permission dialog is gone.
-            postDelayed(new Runnable() {
-              @Override public void run() {
-                captureNativeScreenshot(mediaProjection);
-              }
-            }, 500);
+            if (intent.getBooleanExtra(RequestCaptureActivity.RESULT_EXTRA_PROMPT_SHOWN, true)) {
+              // Delay capture until after the permission dialog is gone.
+              postDelayed(new Runnable() {
+                @Override public void run() {
+                  captureNativeScreenshotPreQ(mediaProjection);
+                }
+              }, 500);
+            } else {
+              captureNativeScreenshotPreQ(mediaProjection);
+            }
           } else {
-            captureNativeScreenshot(mediaProjection);
+            context.startService(new Intent(context.getApplicationContext(), TelescopeProjectionService.class));
           }
         }
       };
@@ -622,7 +629,7 @@ public class TelescopeLayout extends FrameLayout {
     return backgroundHandler;
   }
 
-  @TargetApi(LOLLIPOP) void captureNativeScreenshot(final MediaProjection projection) {
+  @TargetApi(LOLLIPOP) void captureNativeScreenshotPreQ(final MediaProjection projection) {
     capturingStart();
 
     // Wait for the next frame to be sure our progress bars are hidden.
