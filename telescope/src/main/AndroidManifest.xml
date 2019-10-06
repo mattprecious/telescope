@@ -22,6 +22,9 @@
           android:resource="@xml/telescope_file_paths"
           />
     </provider>
+    <service
+        android:name=".TelescopeProjectionService"
+        android:foregroundServiceType="mediaProjection" />
   </application>
 
 </manifest>
