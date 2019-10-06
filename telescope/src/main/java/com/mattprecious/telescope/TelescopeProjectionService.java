@@ -2,6 +2,9 @@ package com.mattprecious.telescope;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +17,9 @@ import static android.os.Build.VERSION_CODES.Q;
 
 @TargetApi(Q)
 public class TelescopeProjectionService extends Service {
+    public static final String NOTIFICATION_CHANNEL_ID = "Telescope Notifications";
+    public static final int SERVICE_ID = NOTIFICATION_CHANNEL_ID.hashCode();
+
     public static final String RESULT_EXTRA_CODE = "code";
     public static final String RESULT_EXTRA_DATA = "data";
 
@@ -23,8 +29,24 @@ public class TelescopeProjectionService extends Service {
     public void onCreate() {
         super.onCreate();
 
+        createNotificationChannel();
+        startForeground(
+                SERVICE_ID,
+                new Notification.Builder(this, NOTIFICATION_CHANNEL_ID).build()
+        );
         projectionManager =
                 (MediaProjectionManager) getApplicationContext().getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+    }
+
+    private void createNotificationChannel() {
+        NotificationChannel serviceChannel = new NotificationChannel(
+                NOTIFICATION_CHANNEL_ID,
+                "Telescope Service Channel",
+                NotificationManager.IMPORTANCE_DEFAULT
+        );
+
+        NotificationManager notificationManager = getSystemService(NotificationManager.class);
+        notificationManager.createNotificationChannel(serviceChannel);
     }
 
     @Override
@@ -35,7 +57,7 @@ public class TelescopeProjectionService extends Service {
 
         final MediaProjection mediaProjection =
                 projectionManager.getMediaProjection(resultCode, data);
-        
+
         return super.onStartCommand(intent, flags, startId);
     }
 
