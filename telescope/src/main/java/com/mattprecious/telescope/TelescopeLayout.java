@@ -17,9 +17,9 @@ import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Process;
-import android.os.ResultReceiver;
 import android.os.Vibrator;
 import android.support.annotation.ColorInt;
 import android.support.annotation.IntRange;
@@ -187,8 +187,31 @@ public class TelescopeLayout extends FrameLayout {
       if (SDK_INT < Q) {
         foregroundServiceResultReceiver = null;
       } else {
-        foregroundServiceResultReceiver = new NativeCaptureResultReceiver();
-        foregroundServiceResultReceiver.setReceiver(nativeCaptureListener);
+        foregroundServiceResultReceiver = new NativeCaptureResultReceiver() {
+          @Override
+          protected void onReceiveResult(int resultCode, Bundle resultData) {
+            switch (resultCode) {
+              case NativeCaptureResultReceiver.RESULT_CODE_IMAGE_CAPTURE_STARTED:
+                nativeCaptureListener.onImageCaptureStarted();
+                break;
+              case NativeCaptureResultReceiver.RESULT_CODE_IMAGE_CAPTURE_COMPLETED:
+                nativeCaptureListener.onImageCaptureComplete();
+                break;
+              case NativeCaptureResultReceiver.RESULT_CODE_IMAGE_CAPTURE_ERROR:
+                nativeCaptureListener.onImageCaptureError();
+                break;
+              case NativeCaptureResultReceiver.RESULT_CODE_BITMAP_PREP_STARTED:
+                nativeCaptureListener.onBitmapPreparationStarted();
+                break;
+              case NativeCaptureResultReceiver.RESULT_CODE_BITMAP_READY:
+                final Bitmap bitmap = resultData.getParcelable(NativeCaptureResultReceiver.EXTRA_RESULT_BITMAP);
+                nativeCaptureListener.onBitmapReady(bitmap);
+                break;
+              default:
+                throw new IllegalArgumentException("Unknown result code " + resultCode);
+            }
+          }
+        };
       }
 
       requestCaptureFilter =
@@ -232,6 +255,7 @@ public class TelescopeLayout extends FrameLayout {
 
   private void startForegroundServiceForNativeScreenshot(int resultCode, Intent data) {
     Intent serviceIntent = new Intent(getContext().getApplicationContext(), TelescopeProjectionService.class);
+    serviceIntent.putExtra(TelescopeProjectionService.RESULT_RECEIVER, foregroundServiceResultReceiver);
     serviceIntent.putExtra(TelescopeProjectionService.RESULT_EXTRA_CODE, resultCode);
     serviceIntent.putExtra(TelescopeProjectionService.RESULT_EXTRA_DATA, data);
     getContext().startService(serviceIntent);
@@ -251,9 +275,9 @@ public class TelescopeLayout extends FrameLayout {
         });
       }
 
-      @Override public void onImageCaptureError(Exception e) {
+      @Override public void onImageCaptureError() {
         Log.e(TAG,
-                "Failed to capture system screenshot. Setting the screenshot mode to CANVAS.", e);
+                "Failed to capture system screenshot. Setting the screenshot mode to CANVAS.");
         setScreenshotMode(ScreenshotMode.CANVAS);
         post(new Runnable() {
           @Override public void run() {
@@ -262,7 +286,7 @@ public class TelescopeLayout extends FrameLayout {
         });
       }
 
-      @Override public void onCaptureBitmapPreparationStarted() {
+      @Override public void onBitmapPreparationStarted() {
         saving = true;
       }
 
@@ -273,6 +297,10 @@ public class TelescopeLayout extends FrameLayout {
             new TelescopeLayout.SaveScreenshotTask(bitmap).execute();
           }
         });
+      }
+
+      @Override public void dispose() {
+        // no-op
       }
     };
   }

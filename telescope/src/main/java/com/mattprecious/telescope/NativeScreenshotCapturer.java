@@ -68,7 +68,7 @@ class NativeScreenshotCapturer {
                         return;
                     }
 
-                    listener.onCaptureBitmapPreparationStarted();
+                    listener.onBitmapPreparationStarted();
 
                     Image.Plane[] planes = image.getPlanes();
                     ByteBuffer buffer = planes[0].getBuffer();
@@ -85,7 +85,7 @@ class NativeScreenshotCapturer {
 
                     listener.onBitmapReady(croppedBitmap);
                 } catch (UnsupportedOperationException e) {
-                    listener.onImageCaptureError(e);
+                    listener.onImageCaptureError();
                 } finally {
                     if (bitmap != null) {
                         bitmap.recycle();
@@ -98,6 +98,7 @@ class NativeScreenshotCapturer {
                     reader.close();
                     display.release();
                     projection.stop();
+                    listener.dispose();
                 }
             }
         }, getBackgroundHandler());
