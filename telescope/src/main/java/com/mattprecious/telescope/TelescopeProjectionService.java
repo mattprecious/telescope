@@ -60,7 +60,11 @@ public class TelescopeProjectionService extends Service {
                 projectionManager.getMediaProjection(resultCode, data);
 
         new NativeScreenshotCapturer(getApplicationContext()).capture(mediaProjection,
-                new NativeScreenshotCapturer.Listener() {
+                new NativeCaptureListener() {
+                    @Override
+                    public void onImageCaptureStarted() {
+                    }
+
                     @Override
                     public void onImageCaptureComplete() {
                         

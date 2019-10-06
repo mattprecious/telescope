@@ -38,7 +38,9 @@ class NativeScreenshotCapturer {
      * @param listener
      *            The listener that will be run.
      */
-    void capture(final MediaProjection projection, final Listener listener) {
+    void capture(final MediaProjection projection, final NativeCaptureListener listener) {
+        listener.onImageCaptureStarted();
+
         DisplayMetrics displayMetrics = new DisplayMetrics();
         windowManager.getDefaultDisplay().getRealMetrics(displayMetrics);
         final int width = displayMetrics.widthPixels;
@@ -110,12 +112,5 @@ class NativeScreenshotCapturer {
         }
 
         return backgroundHandler;
-    }
-
-    public interface Listener {
-        void onImageCaptureComplete();
-        void onImageCaptureError(Exception exception);
-        void onCaptureBitmapPreparationStarted();
-        void onBitmapReady(final Bitmap bitmap);
     }
 }

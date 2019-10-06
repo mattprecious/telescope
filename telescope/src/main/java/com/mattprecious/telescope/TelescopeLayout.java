@@ -19,6 +19,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Process;
+import android.os.ResultReceiver;
 import android.os.Vibrator;
 import android.support.annotation.ColorInt;
 import android.support.annotation.IntRange;
@@ -75,6 +76,8 @@ public class TelescopeLayout extends FrameLayout {
   };
   private final IntentFilter requestCaptureFilter;
   private final BroadcastReceiver requestCaptureReceiver;
+  private final NativeCaptureListener nativeCaptureListener;
+  private final NativeCaptureResultReceiver foregroundServiceResultReceiver;
 
   private final float halfStrokeWidth;
   private final Paint progressPaint;
@@ -162,6 +165,8 @@ public class TelescopeLayout extends FrameLayout {
       vibrator = null;
       requestCaptureFilter = null;
       requestCaptureReceiver = null;
+      nativeCaptureListener = null;
+      foregroundServiceResultReceiver = null;
       return;
     }
 
@@ -172,9 +177,19 @@ public class TelescopeLayout extends FrameLayout {
       projectionManager = null;
       requestCaptureFilter = null;
       requestCaptureReceiver = null;
+      nativeCaptureListener = null;
+      foregroundServiceResultReceiver = null;
     } else {
+      nativeCaptureListener = nativeCaptureListener();
       projectionManager =
           (MediaProjectionManager) context.getApplicationContext().getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+
+      if (SDK_INT < Q) {
+        foregroundServiceResultReceiver = null;
+      } else {
+        foregroundServiceResultReceiver = new NativeCaptureResultReceiver();
+        foregroundServiceResultReceiver.setReceiver(nativeCaptureListener);
+      }
 
       requestCaptureFilter =
           new IntentFilter(RequestCaptureActivity.getResultBroadcastAction(context));
@@ -220,6 +235,46 @@ public class TelescopeLayout extends FrameLayout {
     serviceIntent.putExtra(TelescopeProjectionService.RESULT_EXTRA_CODE, resultCode);
     serviceIntent.putExtra(TelescopeProjectionService.RESULT_EXTRA_DATA, data);
     getContext().startService(serviceIntent);
+  }
+
+  private NativeCaptureListener nativeCaptureListener() {
+    return new NativeCaptureListener() {
+      @Override public void onImageCaptureStarted() {
+        capturingStart();
+      }
+
+      @Override public void onImageCaptureComplete() {
+        post(new Runnable() {
+          @Override public void run() {
+            capturingEnd();
+          }
+        });
+      }
+
+      @Override public void onImageCaptureError(Exception e) {
+        Log.e(TAG,
+                "Failed to capture system screenshot. Setting the screenshot mode to CANVAS.", e);
+        setScreenshotMode(ScreenshotMode.CANVAS);
+        post(new Runnable() {
+          @Override public void run() {
+            captureCanvasScreenshot();
+          }
+        });
+      }
+
+      @Override public void onCaptureBitmapPreparationStarted() {
+        saving = true;
+      }
+
+      @Override public void onBitmapReady(final Bitmap bitmap) {
+        checkLens();
+        lens.onCapture(bitmap, new BitmapProcessorListener() {
+          @Override public void onBitmapReady(Bitmap screenshot) {
+            new TelescopeLayout.SaveScreenshotTask(bitmap).execute();
+          }
+        });
+      }
+    };
   }
 
   /**
@@ -616,46 +671,6 @@ public class TelescopeLayout extends FrameLayout {
   }
 
   @TargetApi(LOLLIPOP) void captureNativeScreenshotPreQ(final MediaProjection projection) {
-    capturingStart();
-
-    // Wait for the next frame to be sure our progress bars are hidden.
-    post(new Runnable() {
-      @Override public void run() {
-        new NativeScreenshotCapturer(getContext()).capture(projection,
-                new NativeScreenshotCapturer.Listener() {
-                  @Override public void onImageCaptureComplete() {
-                    post(new Runnable() {
-                      @Override public void run() {
-                        capturingEnd();
-                      }
-                    });
-                  }
-
-                  @Override public void onImageCaptureError(Exception e) {
-                    Log.e(TAG,
-                            "Failed to capture system screenshot. Setting the screenshot mode to CANVAS.", e);
-                    setScreenshotMode(ScreenshotMode.CANVAS);
-                    post(new Runnable() {
-                      @Override public void run() {
-                        captureCanvasScreenshot();
-                      }
-                    });
-                  }
-
-                  @Override public void onCaptureBitmapPreparationStarted() {
-                    saving = true;
-                  }
-
-                  @Override public void onBitmapReady(final Bitmap bitmap) {
-                    checkLens();
-                    lens.onCapture(bitmap, new BitmapProcessorListener() {
-                      @Override public void onBitmapReady(Bitmap screenshot) {
-                        new TelescopeLayout.SaveScreenshotTask(bitmap).execute();
-                      }
-                    });
-                  }
-                });
-      }
-    });
+    new NativeScreenshotCapturer(getContext()).capture(projection, nativeCaptureListener);
   }
 }
