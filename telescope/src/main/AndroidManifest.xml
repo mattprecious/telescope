@@ -4,6 +4,8 @@
     android:versionCode="1"
     >
 
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
   <application>
     <activity
         android:name=".RequestCaptureActivity"
