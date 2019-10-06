@@ -37,6 +37,7 @@ import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -218,11 +219,18 @@ public class TelescopeLayout extends FrameLayout {
               captureNativeScreenshotPreQ(mediaProjection);
             }
           } else {
-            context.startService(new Intent(context.getApplicationContext(), TelescopeProjectionService.class));
+            startForegroundServiceForNativeScreenshot(resultCode, data);
           }
         }
       };
     }
+  }
+
+  private void startForegroundServiceForNativeScreenshot(int resultCode, Intent data) {
+    Intent serviceIntent = new Intent(getContext().getApplicationContext(), TelescopeProjectionService.class);
+    serviceIntent.putExtra(TelescopeProjectionService.RESULT_EXTRA_CODE, resultCode);
+    serviceIntent.putExtra(TelescopeProjectionService.RESULT_EXTRA_DATA, data);
+    getContext().startService(serviceIntent);
   }
 
   /**
