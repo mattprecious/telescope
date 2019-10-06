@@ -13,27 +13,19 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.PixelFormat;
-import android.hardware.display.DisplayManager;
-import android.hardware.display.VirtualDisplay;
-import android.media.Image;
-import android.media.ImageReader;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.Process;
 import android.os.Vibrator;
 import android.support.annotation.ColorInt;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
@@ -42,7 +34,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -72,8 +63,6 @@ public class TelescopeLayout extends FrameLayout {
 
   private static final int DEFAULT_POINTER_COUNT = 2;
   private static final int DEFAULT_PROGRESS_COLOR = 0xff2196f3;
-
-  private static Handler backgroundHandler;
 
   final MediaProjectionManager projectionManager;
   final WindowManager windowManager;
@@ -626,99 +615,46 @@ public class TelescopeLayout extends FrameLayout {
     getContext().unregisterReceiver(requestCaptureReceiver);
   }
 
-  static Handler getBackgroundHandler() {
-    if (backgroundHandler == null) {
-      HandlerThread backgroundThread =
-          new HandlerThread("telescope", Process.THREAD_PRIORITY_BACKGROUND);
-      backgroundThread.start();
-      backgroundHandler = new Handler(backgroundThread.getLooper());
-    }
-
-    return backgroundHandler;
-  }
-
   @TargetApi(LOLLIPOP) void captureNativeScreenshotPreQ(final MediaProjection projection) {
     capturingStart();
 
     // Wait for the next frame to be sure our progress bars are hidden.
     post(new Runnable() {
       @Override public void run() {
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        windowManager.getDefaultDisplay().getRealMetrics(displayMetrics);
-        final int width = displayMetrics.widthPixels;
-        final int height = displayMetrics.heightPixels;
+        new NativeScreenshotCapturer(getContext()).capture(projection,
+                new NativeScreenshotCapturer.Listener() {
+                  @Override public void onImageCaptureComplete() {
+                    post(new Runnable() {
+                      @Override public void run() {
+                        capturingEnd();
+                      }
+                    });
+                  }
 
-        @SuppressLint("WrongConstant")
-        ImageReader imageReader = ImageReader.newInstance(width, height, PixelFormat.RGBA_8888, 2);
-        Surface surface = imageReader.getSurface();
+                  @Override public void onImageCaptureError(Exception e) {
+                    Log.e(TAG,
+                            "Failed to capture system screenshot. Setting the screenshot mode to CANVAS.", e);
+                    setScreenshotMode(ScreenshotMode.CANVAS);
+                    post(new Runnable() {
+                      @Override public void run() {
+                        captureCanvasScreenshot();
+                      }
+                    });
+                  }
 
-        final VirtualDisplay display =
-            projection.createVirtualDisplay("telescope", width, height, displayMetrics.densityDpi,
-                DisplayManager.VIRTUAL_DISPLAY_FLAG_PRESENTATION, surface, null, null);
+                  @Override public void onCaptureBitmapPreparationStarted() {
+                    saving = true;
+                  }
 
-        imageReader.setOnImageAvailableListener(new ImageReader.OnImageAvailableListener() {
-          @Override public void onImageAvailable(ImageReader reader) {
-            Image image = null;
-            Bitmap bitmap = null;
-
-            try {
-              image = reader.acquireLatestImage();
-
-              post(new Runnable() {
-                @Override public void run() {
-                  capturingEnd();
-                }
-              });
-
-              if (image == null) {
-                return;
-              }
-
-              saving = true;
-
-              Image.Plane[] planes = image.getPlanes();
-              ByteBuffer buffer = planes[0].getBuffer();
-              int pixelStride = planes[0].getPixelStride();
-              int rowStride = planes[0].getRowStride();
-              int rowPadding = rowStride - pixelStride * width;
-
-              bitmap = Bitmap.createBitmap(width + rowPadding / pixelStride, height,
-                  Bitmap.Config.ARGB_8888);
-              bitmap.copyPixelsFromBuffer(buffer);
-
-              // Trim the screenshot to the correct size.
-              final Bitmap croppedBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height);
-
-              checkLens();
-              lens.onCapture(croppedBitmap, new BitmapProcessorListener() {
-                @Override public void onBitmapReady(Bitmap screenshot) {
-                  new SaveScreenshotTask(croppedBitmap).execute();
-                }
-              });
-            } catch (UnsupportedOperationException e) {
-              Log.e(TAG,
-                  "Failed to capture system screenshot. Setting the screenshot mode to CANVAS.", e);
-              setScreenshotMode(ScreenshotMode.CANVAS);
-              post(new Runnable() {
-                @Override public void run() {
-                  captureCanvasScreenshot();
-                }
-              });
-            } finally {
-              if (bitmap != null) {
-                bitmap.recycle();
-              }
-
-              if (image != null) {
-                image.close();
-              }
-
-              reader.close();
-              display.release();
-              projection.stop();
-            }
-          }
-        }, getBackgroundHandler());
+                  @Override public void onBitmapReady(final Bitmap bitmap) {
+                    checkLens();
+                    lens.onCapture(bitmap, new BitmapProcessorListener() {
+                      @Override public void onBitmapReady(Bitmap screenshot) {
+                        new TelescopeLayout.SaveScreenshotTask(bitmap).execute();
+                      }
+                    });
+                  }
+                });
       }
     });
   }

@@ -8,6 +8,7 @@ import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.IBinder;
@@ -57,6 +58,29 @@ public class TelescopeProjectionService extends Service {
 
         final MediaProjection mediaProjection =
                 projectionManager.getMediaProjection(resultCode, data);
+
+        new NativeScreenshotCapturer(getApplicationContext()).capture(mediaProjection,
+                new NativeScreenshotCapturer.Listener() {
+                    @Override
+                    public void onImageCaptureComplete() {
+                        
+                    }
+
+                    @Override
+                    public void onImageCaptureError(Exception exception) {
+
+                    }
+
+                    @Override
+                    public void onCaptureBitmapPreparationStarted() {
+
+                    }
+
+                    @Override
+                    public void onBitmapReady(Bitmap bitmap) {
+
+                    }
+                });
 
         return super.onStartCommand(intent, flags, startId);
     }
