@@ -37,6 +37,7 @@ import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -52,6 +53,7 @@ import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static android.graphics.Paint.Style;
 import static android.os.Build.VERSION.SDK_INT;
 import static android.os.Build.VERSION_CODES.LOLLIPOP;
+import static android.os.Build.VERSION_CODES.Q;
 import static com.mattprecious.telescope.Preconditions.checkNotNull;
 
 /**
@@ -421,6 +423,7 @@ public class TelescopeLayout extends FrameLayout {
             && !windowHasSecureFlag()) {
           // Take a full screenshot of the device. Request permission first.
           registerRequestCaptureReceiver();
+          startForegroundService();
           getContext().startActivity(new Intent(getContext(), RequestCaptureActivity.class));
           break;
         }
@@ -597,6 +600,7 @@ public class TelescopeLayout extends FrameLayout {
 
     @Override protected void onPostExecute(File screenshot) {
       saving = false;
+      stopForegroundService();
 
       checkLens();
       lens.onCapture(screenshot);
@@ -609,6 +613,26 @@ public class TelescopeLayout extends FrameLayout {
 
   void unregisterRequestCaptureReceiver() {
     getContext().unregisterReceiver(requestCaptureReceiver);
+  }
+
+  private void startForegroundService() {
+    if (SDK_INT >= Q) {
+      // Starting from Android Q, media projections require a foreground service
+      // see https://github.com/mattprecious/telescope/issues/75
+
+      Intent serviceIntent = new Intent(getContext(), TelescopeProjectionService.class);
+      getContext().startForegroundService(serviceIntent);
+    }
+  }
+
+  private void stopForegroundService() {
+    if (SDK_INT >= Q) {
+      // Starting from Android Q, media projections require a foreground service
+      // see https://github.com/mattprecious/telescope/issues/75
+
+      Intent serviceIntent = new Intent(getContext(), TelescopeProjectionService.class);
+      getContext().stopService(serviceIntent);
+    }
   }
 
   static Handler getBackgroundHandler() {
