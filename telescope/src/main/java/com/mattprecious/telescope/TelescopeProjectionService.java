@@ -29,7 +29,7 @@ public class TelescopeProjectionService extends Service {
     private void createNotificationChannel() {
         NotificationChannel serviceChannel = new NotificationChannel(
                 NOTIFICATION_CHANNEL_ID,
-                "Telescope Service Channel",
+                "Telescope",
                 NotificationManager.IMPORTANCE_DEFAULT
         );
 
