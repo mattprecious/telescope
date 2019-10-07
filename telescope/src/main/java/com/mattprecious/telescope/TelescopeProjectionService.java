@@ -30,7 +30,7 @@ public class TelescopeProjectionService extends Service {
         NotificationChannel serviceChannel = new NotificationChannel(
                 NOTIFICATION_CHANNEL_ID,
                 "Telescope",
-                NotificationManager.IMPORTANCE_DEFAULT
+                NotificationManager.IMPORTANCE_MIN
         );
 
         NotificationManager notificationManager = getSystemService(NotificationManager.class);
