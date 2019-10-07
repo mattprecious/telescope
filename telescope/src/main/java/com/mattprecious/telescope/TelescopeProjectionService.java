@@ -13,33 +13,33 @@ import static android.os.Build.VERSION_CODES.Q;
 
 @TargetApi(Q)
 public class TelescopeProjectionService extends Service {
-    public static final String NOTIFICATION_CHANNEL_ID = "Telescope Notifications";
-    public static final int SERVICE_ID = NOTIFICATION_CHANNEL_ID.hashCode();
+  public static final String NOTIFICATION_CHANNEL_ID = "Telescope Notifications";
+  public static final int SERVICE_ID = NOTIFICATION_CHANNEL_ID.hashCode();
 
-    @Override public void onCreate() {
-        super.onCreate();
+  @Override public void onCreate() {
+    super.onCreate();
 
-        createNotificationChannel();
-        startForeground(
-                SERVICE_ID,
-                new Notification.Builder(this, NOTIFICATION_CHANNEL_ID).build()
-        );
-    }
+    createNotificationChannel();
+    startForeground(
+        SERVICE_ID,
+        new Notification.Builder(this, NOTIFICATION_CHANNEL_ID).build()
+    );
+  }
 
-    private void createNotificationChannel() {
-        NotificationChannel serviceChannel = new NotificationChannel(
-                NOTIFICATION_CHANNEL_ID,
-                "Telescope",
-                NotificationManager.IMPORTANCE_MIN
-        );
+  private void createNotificationChannel() {
+    NotificationChannel serviceChannel = new NotificationChannel(
+        NOTIFICATION_CHANNEL_ID,
+        "Telescope",
+        NotificationManager.IMPORTANCE_MIN
+    );
 
-        NotificationManager notificationManager = getSystemService(NotificationManager.class);
-        notificationManager.createNotificationChannel(serviceChannel);
-    }
+    NotificationManager notificationManager = getSystemService(NotificationManager.class);
+    notificationManager.createNotificationChannel(serviceChannel);
+  }
 
 
-    @Nullable @Override public IBinder onBind(Intent intent) {
-        return null;
-    }
+  @Nullable @Override public IBinder onBind(Intent intent) {
+    return null;
+  }
 
 }
