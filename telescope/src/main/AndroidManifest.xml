@@ -4,6 +4,8 @@
     android:versionCode="1"
     >
 
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
   <application>
     <activity
         android:name=".RequestCaptureActivity"
@@ -22,6 +24,9 @@
           android:resource="@xml/telescope_file_paths"
           />
     </provider>
+    <service
+        android:name=".TelescopeProjectionService"
+        android:foregroundServiceType="mediaProjection" />
   </application>
 
 </manifest>
