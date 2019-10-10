@@ -1,17 +1,20 @@
 package com.mattprecious.telescope.sample;
 
+import androidx.annotation.LayoutRes;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import com.google.android.material.tabs.TabLayout;
+import com.mattprecious.telescope.TelescopeLayout;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.StringRes;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
@@ -20,9 +23,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import com.mattprecious.telescope.TelescopeLayout;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +36,7 @@ public class SampleActivity extends AppCompatActivity {
     setContentView(R.layout.sample_activity);
     ButterKnife.bind(this);
 
-    setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+    setSupportActionBar(findViewById(R.id.toolbar));
 
     Adapter adapter = new Adapter(this);
     adapter.addView(R.layout.default_view, R.string.tab_default);

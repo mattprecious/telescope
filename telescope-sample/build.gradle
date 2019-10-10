@@ -1,6 +1,6 @@
 buildscript {
   dependencies {
-    classpath 'com.android.tools.build:gradle:3.5.0'
+    classpath 'com.android.tools.build:gradle:3.5.1'
   }
 }
 
@@ -9,10 +9,11 @@ apply plugin: 'com.android.application'
 dependencies {
   implementation project(':telescope')
 
-  implementation "com.android.support:support-v4:$supportLibVersion"
-  implementation "com.android.support:appcompat-v7:$supportLibVersion"
-  implementation "com.android.support:design:$supportLibVersion"
-  implementation 'com.google.android.gms:play-services-maps:10.2.1'
+  implementation "androidx.coordinatorlayout:coordinatorlayout:1.0.0"
+  implementation "androidx.viewpager:viewpager:1.0.0"
+  implementation "androidx.appcompat:appcompat:1.1.0"
+  implementation "com.google.android.material:material:1.0.0"
+  implementation 'com.google.android.gms:play-services-maps:17.0.0'
   implementation "com.jakewharton:butterknife:$butterKnifeVersion"
   annotationProcessor "com.jakewharton:butterknife-compiler:$butterKnifeVersion"
 }
@@ -40,8 +41,8 @@ android {
   }
 
   compileOptions {
-    sourceCompatibility JavaVersion.VERSION_1_7
-    targetCompatibility JavaVersion.VERSION_1_7
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
   }
 
   lintOptions {
