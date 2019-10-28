@@ -1,7 +1,7 @@
 package com.mattprecious.telescope;
 
 import android.graphics.Bitmap;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 /**
  * Interface definition for a callback to be invoked when additional processing on the screenshot
