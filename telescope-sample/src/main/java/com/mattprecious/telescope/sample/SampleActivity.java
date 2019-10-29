@@ -1,16 +1,5 @@
 package com.mattprecious.telescope.sample;
 
-import androidx.annotation.LayoutRes;
-import androidx.annotation.StringRes;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.viewpager.widget.PagerAdapter;
-import androidx.viewpager.widget.ViewPager;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import com.google.android.material.tabs.TabLayout;
-import com.mattprecious.telescope.TelescopeLayout;
-
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
@@ -23,7 +12,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
+import androidx.annotation.LayoutRes;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import com.google.android.material.tabs.TabLayout;
+import com.mattprecious.telescope.TelescopeLayout;
 import java.util.ArrayList;
 import java.util.List;
 

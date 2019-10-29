@@ -26,9 +26,6 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Process;
 import android.os.Vibrator;
-import androidx.annotation.ColorInt;
-import androidx.annotation.IntRange;
-import androidx.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -37,7 +34,9 @@ import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-
+import androidx.annotation.ColorInt;
+import androidx.annotation.IntRange;
+import androidx.annotation.NonNull;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -185,7 +184,8 @@ public class TelescopeLayout extends FrameLayout {
       requestCaptureReceiver = null;
     } else {
       projectionManager =
-          (MediaProjectionManager) context.getApplicationContext().getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+          (MediaProjectionManager) context.getApplicationContext()
+              .getSystemService(Context.MEDIA_PROJECTION_SERVICE);
 
       requestCaptureFilter =
           new IntentFilter(RequestCaptureActivity.getResultBroadcastAction(context));

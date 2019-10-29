@@ -37,9 +37,7 @@ public class TelescopeProjectionService extends Service {
     notificationManager.createNotificationChannel(serviceChannel);
   }
 
-
   @Nullable @Override public IBinder onBind(Intent intent) {
     return null;
   }
-
 }

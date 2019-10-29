@@ -26,7 +26,8 @@
     </provider>
     <service
         android:name=".TelescopeProjectionService"
-        android:foregroundServiceType="mediaProjection" />
+        android:foregroundServiceType="mediaProjection"
+        />
   </application>
 
 </manifest>

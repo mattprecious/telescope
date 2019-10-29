@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <declare-styleable name="telescope_TelescopeLayout">
-    <attr name="telescope_pointerCount" format="integer"/>
-    <attr name="telescope_progressColor" format="color"/>
+    <attr name="telescope_pointerCount" format="integer" />
+    <attr name="telescope_progressColor" format="color" />
     <attr name="telescope_screenshotMode" format="enum">
-      <enum name="system" value="0"/>
-      <enum name="canvas" value="1"/>
-      <enum name="none" value="2"/>
+      <enum name="system" value="0" />
+      <enum name="canvas" value="1" />
+      <enum name="none" value="2" />
     </attr>
-    <attr name="telescope_screenshotChildrenOnly" format="boolean"/>
-    <attr name="telescope_vibrate" format="boolean"/>
+    <attr name="telescope_screenshotChildrenOnly" format="boolean" />
+    <attr name="telescope_vibrate" format="boolean" />
   </declare-styleable>
 </resources>

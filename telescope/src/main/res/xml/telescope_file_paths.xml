@@ -2,6 +2,5 @@
 <paths>
   <external-app-path
       name="screenshots"
-      path="telescope/"
-      />
+      path="telescope/" />
 </paths>
