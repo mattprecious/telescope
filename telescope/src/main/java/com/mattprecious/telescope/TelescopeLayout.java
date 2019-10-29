@@ -78,11 +78,7 @@ public class TelescopeLayout extends FrameLayout {
   final WindowManager windowManager;
   private final Vibrator vibrator;
   private final Handler handler = new Handler();
-  private final Runnable trigger = new Runnable() {
-    @Override public void run() {
-      trigger();
-    }
-  };
+  private final Runnable trigger = this::trigger;
   private final IntentFilter requestCaptureFilter;
   private final BroadcastReceiver requestCaptureReceiver;
 
@@ -141,11 +137,9 @@ public class TelescopeLayout extends FrameLayout {
     progressPaint.setStrokeWidth(PROGRESS_STROKE_DP * density);
     progressPaint.setStyle(Style.STROKE);
 
-    AnimatorUpdateListener progressUpdateListener = new AnimatorUpdateListener() {
-      @Override public void onAnimationUpdate(ValueAnimator animation) {
-        progressFraction = (float) animation.getAnimatedValue();
-        invalidate();
-      }
+    AnimatorUpdateListener progressUpdateListener = animation -> {
+      progressFraction = (float) animation.getAnimatedValue();
+      invalidate();
     };
 
     progressAnimator = new ValueAnimator();
@@ -159,11 +153,9 @@ public class TelescopeLayout extends FrameLayout {
     doneFraction = 1;
     doneAnimator = ValueAnimator.ofFloat(0, 1);
     doneAnimator.setDuration(DONE_DURATION_MS);
-    doneAnimator.addUpdateListener(new AnimatorUpdateListener() {
-      @Override public void onAnimationUpdate(ValueAnimator animation) {
-        doneFraction = (float) animation.getAnimatedValue();
-        invalidate();
-      }
+    doneAnimator.addUpdateListener(animation -> {
+      doneFraction = (float) animation.getAnimatedValue();
+      invalidate();
     });
 
     if (isInEditMode()) {
@@ -207,11 +199,7 @@ public class TelescopeLayout extends FrameLayout {
 
           if (intent.getBooleanExtra(RequestCaptureActivity.RESULT_EXTRA_PROMPT_SHOWN, true)) {
             // Delay capture until after the permission dialog is gone.
-            postDelayed(new Runnable() {
-              @Override public void run() {
-                captureNativeScreenshot(mediaProjection);
-              }
-            }, 500);
+            postDelayed(() -> captureNativeScreenshot(mediaProjection), 500);
           } else {
             captureNativeScreenshot(mediaProjection);
           }
@@ -475,22 +463,16 @@ public class TelescopeLayout extends FrameLayout {
     capturingStart();
 
     // Wait for the next frame to be sure our progress bars are hidden.
-    post(new Runnable() {
-      @Override public void run() {
-        View view = getTargetView();
-        view.setDrawingCacheEnabled(true);
-        Bitmap screenshot = Bitmap.createBitmap(view.getDrawingCache());
-        view.setDrawingCacheEnabled(false);
+    post(() -> {
+      View view = getTargetView();
+      view.setDrawingCacheEnabled(true);
+      Bitmap screenshot = Bitmap.createBitmap(view.getDrawingCache());
+      view.setDrawingCacheEnabled(false);
 
-        capturingEnd();
+      capturingEnd();
 
-        checkLens();
-        lens.onCapture(screenshot, new BitmapProcessorListener() {
-          @Override public void onBitmapReady(Bitmap screenshot) {
-            new SaveScreenshotTask(screenshot).execute();
-          }
-        });
-      }
+      checkLens();
+      lens.onCapture(screenshot, processed -> new SaveScreenshotTask(processed).execute());
     });
   }
 
@@ -650,85 +632,70 @@ public class TelescopeLayout extends FrameLayout {
     capturingStart();
 
     // Wait for the next frame to be sure our progress bars are hidden.
-    post(new Runnable() {
-      @Override public void run() {
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        windowManager.getDefaultDisplay().getRealMetrics(displayMetrics);
-        final int width = displayMetrics.widthPixels;
-        final int height = displayMetrics.heightPixels;
+    post(() -> {
+      DisplayMetrics displayMetrics = new DisplayMetrics();
+      windowManager.getDefaultDisplay().getRealMetrics(displayMetrics);
+      final int width = displayMetrics.widthPixels;
+      final int height = displayMetrics.heightPixels;
 
-        @SuppressLint("WrongConstant")
-        ImageReader imageReader = ImageReader.newInstance(width, height, PixelFormat.RGBA_8888, 2);
-        Surface surface = imageReader.getSurface();
+      @SuppressLint("WrongConstant")
+      ImageReader imageReader = ImageReader.newInstance(width, height, PixelFormat.RGBA_8888, 2);
+      Surface surface = imageReader.getSurface();
 
-        final VirtualDisplay display =
-            projection.createVirtualDisplay("telescope", width, height, displayMetrics.densityDpi,
-                DisplayManager.VIRTUAL_DISPLAY_FLAG_PRESENTATION, surface, null, null);
+      final VirtualDisplay display =
+          projection.createVirtualDisplay("telescope", width, height, displayMetrics.densityDpi,
+              DisplayManager.VIRTUAL_DISPLAY_FLAG_PRESENTATION, surface, null, null);
 
-        imageReader.setOnImageAvailableListener(new ImageReader.OnImageAvailableListener() {
-          @Override public void onImageAvailable(ImageReader reader) {
-            Image image = null;
-            Bitmap bitmap = null;
+      imageReader.setOnImageAvailableListener(reader -> {
+        Image image = null;
+        Bitmap bitmap = null;
 
-            try {
-              image = reader.acquireLatestImage();
+        try {
+          image = reader.acquireLatestImage();
 
-              post(new Runnable() {
-                @Override public void run() {
-                  capturingEnd();
-                }
-              });
+          post(this::capturingEnd);
 
-              if (image == null) {
-                return;
-              }
-
-              saving = true;
-
-              Image.Plane[] planes = image.getPlanes();
-              ByteBuffer buffer = planes[0].getBuffer();
-              int pixelStride = planes[0].getPixelStride();
-              int rowStride = planes[0].getRowStride();
-              int rowPadding = rowStride - pixelStride * width;
-
-              bitmap = Bitmap.createBitmap(width + rowPadding / pixelStride, height,
-                  Bitmap.Config.ARGB_8888);
-              bitmap.copyPixelsFromBuffer(buffer);
-
-              // Trim the screenshot to the correct size.
-              final Bitmap croppedBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height);
-
-              checkLens();
-              lens.onCapture(croppedBitmap, new BitmapProcessorListener() {
-                @Override public void onBitmapReady(Bitmap screenshot) {
-                  new SaveScreenshotTask(croppedBitmap).execute();
-                }
-              });
-            } catch (UnsupportedOperationException e) {
-              Log.e(TAG,
-                  "Failed to capture system screenshot. Setting the screenshot mode to CANVAS.", e);
-              setScreenshotMode(ScreenshotMode.CANVAS);
-              post(new Runnable() {
-                @Override public void run() {
-                  captureCanvasScreenshot();
-                }
-              });
-            } finally {
-              if (bitmap != null) {
-                bitmap.recycle();
-              }
-
-              if (image != null) {
-                image.close();
-              }
-
-              reader.close();
-              display.release();
-              projection.stop();
-            }
+          if (image == null) {
+            return;
           }
-        }, getBackgroundHandler());
-      }
+
+          saving = true;
+
+          Image.Plane[] planes = image.getPlanes();
+          ByteBuffer buffer = planes[0].getBuffer();
+          int pixelStride = planes[0].getPixelStride();
+          int rowStride = planes[0].getRowStride();
+          int rowPadding = rowStride - pixelStride * width;
+
+          bitmap = Bitmap.createBitmap(width + rowPadding / pixelStride, height,
+              Bitmap.Config.ARGB_8888);
+          bitmap.copyPixelsFromBuffer(buffer);
+
+          // Trim the screenshot to the correct size.
+          final Bitmap croppedBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height);
+
+          checkLens();
+          lens.onCapture(croppedBitmap,
+              processed -> new SaveScreenshotTask(croppedBitmap).execute());
+        } catch (UnsupportedOperationException e) {
+          Log.e(TAG,
+              "Failed to capture system screenshot. Setting the screenshot mode to CANVAS.", e);
+          setScreenshotMode(ScreenshotMode.CANVAS);
+          post(this::captureCanvasScreenshot);
+        } finally {
+          if (bitmap != null) {
+            bitmap.recycle();
+          }
+
+          if (image != null) {
+            image.close();
+          }
+
+          reader.close();
+          display.release();
+          projection.stop();
+        }
+      }, getBackgroundHandler());
     });
   }
 }
