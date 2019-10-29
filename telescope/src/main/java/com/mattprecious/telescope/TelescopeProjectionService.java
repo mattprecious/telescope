@@ -22,7 +22,9 @@ public class TelescopeProjectionService extends Service {
     createNotificationChannel();
     startForeground(
         SERVICE_ID,
-        new Notification.Builder(this, NOTIFICATION_CHANNEL_ID).build()
+        new Notification.Builder(this, NOTIFICATION_CHANNEL_ID)
+            .setSmallIcon(R.drawable.telescope_service)
+            .build()
     );
   }
 
