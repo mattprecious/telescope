@@ -1,6 +1,14 @@
 Change Log
 ==========
 
+Version 2.2.0 *(2019-10-29)*
+----------------------------
+
+* Start a foreground service while capturing on Android 10.
+  * Icon can be overridden in your application by adding a drawable named `telescope_service`.
+* Avoid activity leak in Android 10.
+* Migrate to AndroidX.
+
 Version 2.1.0 *(2016-06-01)*
 ----------------------------
 
