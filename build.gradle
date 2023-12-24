@@ -10,6 +10,9 @@ buildscript {
 }
 
 allprojects {
+  group = GROUP
+  version = VERSION_NAME
+
   repositories {
     mavenCentral()
     google()
@@ -23,9 +26,6 @@ subprojects {
         minSdk 14
         compileSdk 30
         targetSdkVersion 29
-
-        group GROUP
-        version VERSION_NAME
       }
 
       compileOptions {
