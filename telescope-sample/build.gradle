@@ -1,31 +1,20 @@
-buildscript {
-  dependencies {
-    classpath 'com.android.tools.build:gradle:8.2.0'
-  }
-}
-
 apply plugin: 'com.android.application'
 
 dependencies {
-  implementation project(':telescope')
+  implementation projects.telescope
 
-  implementation "androidx.coordinatorlayout:coordinatorlayout:1.0.0"
-  implementation "androidx.viewpager:viewpager:1.0.0"
-  implementation "androidx.appcompat:appcompat:1.1.0"
-  implementation "com.google.android.material:material:1.0.0"
-  implementation 'com.google.android.gms:play-services-maps:17.0.0'
+  implementation libs.androidx.coordinatorLayout
+  implementation libs.androidx.viewPager
+  implementation libs.androidx.appCompat
+  implementation libs.material
+  implementation libs.playServices.maps
 }
 
 android {
   namespace 'com.mattprecious.telescope.sample'
 
-  compileSdkVersion rootProject.ext.compileSdkVersion
-
   defaultConfig {
     applicationId 'com.mattprecious.telescope.sample'
-    versionName VERSION_NAME
-    minSdkVersion rootProject.ext.minSdkVersion
-    targetSdkVersion rootProject.ext.targetSdkVersion
   }
 
   signingConfigs {
@@ -38,11 +27,6 @@ android {
     debug {
       signingConfig signingConfigs.debug
     }
-  }
-
-  compileOptions {
-    sourceCompatibility JavaVersion.VERSION_17
-    targetCompatibility JavaVersion.VERSION_17
   }
 
   lintOptions {
