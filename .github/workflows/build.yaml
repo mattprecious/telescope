@@ -29,3 +29,9 @@ jobs:
           gradle-home-cache-cleanup: true
 
       - run: ./gradlew build
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: telescope-sample-debug.apk
+          path: telescope-sample/build/outputs/apk/debug/telescope-sample-debug.apk
+          if-no-files-found: error
