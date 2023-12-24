@@ -4,7 +4,7 @@ maven-publish-gradlePlugin = "com.vanniktech:gradle-maven-publish-plugin:0.26.0"
 
 androidx-annotations = "androidx.annotation:annotation:1.7.1"
 androidx-appCompat = "androidx.appcompat:appcompat:1.6.1"
-androidx-coordinatorLayout = "androidx.coordinatorlayout:coordinatorlayout:1.0.0"
+androidx-coordinatorLayout = "androidx.coordinatorlayout:coordinatorlayout:1.2.0"
 androidx-viewPager = "androidx.viewpager:viewpager:1.0.0"
 
 material = "com.google.android.material:material:1.0.0"
