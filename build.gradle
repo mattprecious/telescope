@@ -1,23 +1,37 @@
-allprojects {
-  buildscript {
-    repositories {
-      mavenCentral()
-      google()
-    }
+buildscript {
+  repositories {
+    mavenCentral()
+    google()
   }
   dependencies {
-    repositories {
-      mavenCentral()
-      google()
+    classpath libs.androidGradlePlugin
+    classpath libs.maven.publish.gradlePlugin
+  }
+}
+
+allprojects {
+  repositories {
+    mavenCentral()
+    google()
+  }
+}
+
+subprojects {
+  plugins.withId('com.android.base') {
+    android {
+      defaultConfig {
+        minSdk 14
+        compileSdk 30
+        targetSdkVersion 29
+
+        group GROUP
+        version VERSION_NAME
+      }
+
+      compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+      }
     }
   }
-
-  ext {
-    compileSdkVersion = 30
-    targetSdkVersion = 29
-    minSdkVersion = 14
-  }
-
-  group = GROUP
-  version = VERSION_NAME
 }

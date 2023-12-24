@@ -1,4 +1,6 @@
 rootProject.name = 'telescope-parent'
 
+enableFeaturePreview('TYPESAFE_PROJECT_ACCESSORS')
+
 include ':telescope'
 include ':telescope-sample'
