@@ -1,12 +1,16 @@
 buildscript {
   dependencies {
-    classpath 'com.android.tools.build:gradle:3.5.1'
+    classpath 'com.android.tools.build:gradle:8.2.0'
+    classpath 'com.vanniktech:gradle-maven-publish-plugin:0.26.0'
   }
 }
 
 apply plugin: 'com.android.library'
+apply plugin: 'com.vanniktech.maven.publish'
 
 android {
+  namespace 'com.mattprecious.telescope'
+
   compileSdkVersion rootProject.ext.compileSdkVersion
 
   defaultConfig {
@@ -16,8 +20,8 @@ android {
   }
 
   compileOptions {
-    sourceCompatibility JavaVersion.VERSION_1_8
-    targetCompatibility JavaVersion.VERSION_1_8
+    sourceCompatibility JavaVersion.VERSION_17
+    targetCompatibility JavaVersion.VERSION_17
   }
 
   resourcePrefix 'telescope_'
@@ -31,5 +35,3 @@ android {
 dependencies {
   implementation "androidx.annotation:annotation:1.1.0"
 }
-
-apply from: 'gradle-mvn-push.gradle'

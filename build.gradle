@@ -3,27 +3,21 @@ allprojects {
     repositories {
       mavenCentral()
       google()
-      jcenter()
     }
   }
   dependencies {
     repositories {
       mavenCentral()
       google()
-      jcenter()
     }
   }
 
   ext {
-    compileSdkVersion = 29
+    compileSdkVersion = 30
     targetSdkVersion = 29
     minSdkVersion = 14
-
-    butterKnifeVersion = '10.2.0'
   }
 
   group = GROUP
   version = VERSION_NAME
-
-  apply plugin: 'maven'
 }

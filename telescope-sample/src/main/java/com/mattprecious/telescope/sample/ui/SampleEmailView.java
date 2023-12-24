@@ -3,14 +3,12 @@ package com.mattprecious.telescope.sample.ui;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import com.mattprecious.telescope.EmailLens;
 import com.mattprecious.telescope.TelescopeLayout;
 import com.mattprecious.telescope.sample.R;
 
 public class SampleEmailView extends FrameLayout {
-  @BindView(R.id.telescope) TelescopeLayout telescopeView;
+  protected TelescopeLayout telescopeView;
 
   public SampleEmailView(Context context, AttributeSet attrs) {
     super(context, attrs);
@@ -18,8 +16,7 @@ public class SampleEmailView extends FrameLayout {
 
   @Override protected void onFinishInflate() {
     super.onFinishInflate();
-    ButterKnife.bind(this);
-
+    telescopeView = findViewById(R.id.telescope);
     telescopeView.setLens(new EmailLens(getContext(), "Bug report", "bugs@blackhole.io"));
   }
 }
