@@ -10,8 +10,6 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -21,21 +19,20 @@ import com.mattprecious.telescope.TelescopeLayout;
 import com.mattprecious.telescope.sample.R;
 
 public class SampleMapsView extends FrameLayout {
-  @BindView(R.id.telescope) TelescopeLayout telescopeView;
-  @BindView(R.id.map) MapView mapView;
-
   public SampleMapsView(Context context, AttributeSet attrs) {
     super(context, attrs);
   }
 
   @Override protected void onFinishInflate() {
     super.onFinishInflate();
-    ButterKnife.bind(this);
+
+    MapView mapView = findViewById(R.id.map);
 
     // Necessary to make MapView work.
     mapView.onCreate(null);
     mapView.onResume();
 
+    TelescopeLayout telescopeView = findViewById(R.id.telescope);
     telescopeView.setLens(new MapsEmailLens(getContext(), mapView));
   }
 

@@ -18,21 +18,15 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import com.google.android.material.tabs.TabLayout;
 import com.mattprecious.telescope.TelescopeLayout;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SampleActivity extends AppCompatActivity {
-  @BindView(R.id.tabs) TabLayout tabsView;
-  @BindView(R.id.pager) ViewPager pagerView;
-
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.sample_activity);
-    ButterKnife.bind(this);
 
     setSupportActionBar(findViewById(R.id.toolbar));
 
@@ -46,7 +40,10 @@ public class SampleActivity extends AppCompatActivity {
     adapter.addView(R.layout.additional_attachment_view, R.string.tab_additional_attachment);
     adapter.addView(R.layout.maps_view, R.string.tab_maps);
 
+    ViewPager pagerView = findViewById(R.id.pager);
     pagerView.setAdapter(adapter);
+
+    TabLayout tabsView = findViewById(R.id.tabs);
     tabsView.setupWithViewPager(pagerView);
   }
 
