@@ -25,7 +25,7 @@ subprojects {
       defaultConfig {
         minSdk 14
         compileSdk 34
-        targetSdkVersion 29
+        targetSdkVersion 34
       }
 
       compileOptions {

@@ -53,6 +53,7 @@ import static android.graphics.Paint.Style;
 import static android.os.Build.VERSION.SDK_INT;
 import static android.os.Build.VERSION_CODES.LOLLIPOP;
 import static android.os.Build.VERSION_CODES.Q;
+import static android.os.Build.VERSION_CODES.TIRAMISU;
 import static com.mattprecious.telescope.Preconditions.checkNotNull;
 
 /**
@@ -590,7 +591,12 @@ public class TelescopeLayout extends FrameLayout {
   }
 
   private void registerRequestCaptureReceiver() {
-    getContext().registerReceiver(requestCaptureReceiver, requestCaptureFilter);
+    if (SDK_INT >= TIRAMISU) {
+      getContext().registerReceiver(requestCaptureReceiver, requestCaptureFilter,
+        Context.RECEIVER_EXPORTED);
+    } else {
+      getContext().registerReceiver(requestCaptureReceiver, requestCaptureFilter);
+    }
   }
 
   void unregisterRequestCaptureReceiver() {
@@ -642,17 +648,17 @@ public class TelescopeLayout extends FrameLayout {
       ImageReader imageReader = ImageReader.newInstance(width, height, PixelFormat.RGBA_8888, 2);
       Surface surface = imageReader.getSurface();
 
-      final VirtualDisplay display =
-          projection.createVirtualDisplay("telescope", width, height, displayMetrics.densityDpi,
-              DisplayManager.VIRTUAL_DISPLAY_FLAG_PRESENTATION, surface, null, null);
+      MediaProjectionCallback callback = new MediaProjectionCallback(imageReader, surface);
+      projection.registerCallback(callback, null);
+
+      callback.setDisplay(
+        projection.createVirtualDisplay("telescope", width, height, displayMetrics.densityDpi,
+          DisplayManager.VIRTUAL_DISPLAY_FLAG_PRESENTATION, surface, null, null)
+      );
 
       imageReader.setOnImageAvailableListener(reader -> {
-        Image image = null;
         Bitmap bitmap = null;
-
-        try {
-          image = reader.acquireLatestImage();
-
+        try (Image image = reader.acquireLatestImage()) {
           post(this::capturingEnd);
 
           if (image == null) {
@@ -687,15 +693,34 @@ public class TelescopeLayout extends FrameLayout {
             bitmap.recycle();
           }
 
-          if (image != null) {
-            image.close();
-          }
-
-          reader.close();
-          display.release();
           projection.stop();
         }
       }, getBackgroundHandler());
     });
+  }
+
+  @TargetApi(LOLLIPOP)
+  private static class MediaProjectionCallback extends MediaProjection.Callback {
+    private final ImageReader reader;
+    private final Surface surface;
+    private VirtualDisplay display = null;
+
+    public MediaProjectionCallback(ImageReader reader, Surface surface) {
+      this.reader = reader;
+      this.surface = surface;
+    }
+
+    public void setDisplay(VirtualDisplay display) {
+      this.display = display;
+    }
+
+    @Override
+    public void onStop() {
+      reader.close();
+      surface.release();
+      if (display != null) {
+        display.release();
+      }
+    }
   }
 }
