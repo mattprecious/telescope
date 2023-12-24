@@ -6,6 +6,7 @@ dependencies {
   implementation libs.androidx.coordinatorLayout
   implementation libs.androidx.viewPager
   implementation libs.androidx.appCompat
+  implementation libs.androidx.multidex
   implementation libs.material
   implementation libs.playServices.maps
 }
@@ -15,6 +16,7 @@ android {
 
   defaultConfig {
     applicationId 'com.mattprecious.telescope.sample'
+    multiDexEnabled true
   }
 
   signingConfigs {
