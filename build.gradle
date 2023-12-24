@@ -6,6 +6,7 @@ buildscript {
   dependencies {
     classpath libs.androidGradlePlugin
     classpath libs.maven.publish.gradlePlugin
+    classpath libs.spotless.gradlePlugin
   }
 }
 
@@ -13,6 +14,17 @@ allprojects {
   repositories {
     mavenCentral()
     google()
+  }
+
+  apply plugin: 'com.diffplug.spotless'
+  spotless {
+    java {
+      target("src/**/*.java")
+      targetExclude("src/**/FileProvider.java") // This is copied in from AOSP.
+      removeUnusedImports()
+      googleJavaFormat()
+      formatAnnotations()
+    }
   }
 }
 

@@ -1,6 +1,7 @@
 [libraries]
 androidGradlePlugin = "com.android.tools.build:gradle:8.2.0"
 maven-publish-gradlePlugin = "com.vanniktech:gradle-maven-publish-plugin:0.26.0"
+spotless-gradlePlugin = "com.diffplug.spotless:spotless-plugin-gradle:6.23.3"
 
 androidx-annotations = "androidx.annotation:annotation:1.1.0"
 androidx-appCompat = "androidx.appcompat:appcompat:1.1.0"
