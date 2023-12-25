@@ -51,9 +51,6 @@ import static android.animation.ValueAnimator.AnimatorUpdateListener;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static android.graphics.Paint.Style;
 import static android.os.Build.VERSION.SDK_INT;
-import static android.os.Build.VERSION_CODES.LOLLIPOP;
-import static android.os.Build.VERSION_CODES.Q;
-import static android.os.Build.VERSION_CODES.TIRAMISU;
 import static com.mattprecious.telescope.Preconditions.checkNotNull;
 
 /**
@@ -171,7 +168,7 @@ public class TelescopeLayout extends FrameLayout {
     windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
     vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
 
-    if (SDK_INT < LOLLIPOP) {
+    if (SDK_INT < 21) {
       projectionManager = null;
       requestCaptureFilter = null;
       requestCaptureReceiver = null;
@@ -591,7 +588,7 @@ public class TelescopeLayout extends FrameLayout {
   }
 
   private void registerRequestCaptureReceiver() {
-    if (SDK_INT >= TIRAMISU) {
+    if (SDK_INT >= 33) {
       getContext().registerReceiver(requestCaptureReceiver, requestCaptureFilter,
         Context.RECEIVER_EXPORTED);
     } else {
@@ -604,8 +601,8 @@ public class TelescopeLayout extends FrameLayout {
   }
 
   private void startForegroundService() {
-    if (SDK_INT >= Q) {
-      // Starting from Android Q, media projections require a foreground service
+    if (SDK_INT >= 29) {
+      // Starting from SDK 29, media projections require a foreground service
       // see https://github.com/mattprecious/telescope/issues/75
 
       Intent serviceIntent = new Intent(getContext(), TelescopeProjectionService.class);
@@ -614,8 +611,8 @@ public class TelescopeLayout extends FrameLayout {
   }
 
   private void stopForegroundService() {
-    if (SDK_INT >= Q) {
-      // Starting from Android Q, media projections require a foreground service
+    if (SDK_INT >= 29) {
+      // Starting from SDK 29, media projections require a foreground service
       // see https://github.com/mattprecious/telescope/issues/75
 
       Intent serviceIntent = new Intent(getContext(), TelescopeProjectionService.class);
@@ -634,7 +631,7 @@ public class TelescopeLayout extends FrameLayout {
     return backgroundHandler;
   }
 
-  @TargetApi(LOLLIPOP) void captureNativeScreenshot(final MediaProjection projection) {
+  @TargetApi(21) void captureNativeScreenshot(final MediaProjection projection) {
     capturingStart();
 
     // Wait for the next frame to be sure our progress bars are hidden.
@@ -699,7 +696,7 @@ public class TelescopeLayout extends FrameLayout {
     });
   }
 
-  @TargetApi(LOLLIPOP)
+  @TargetApi(21)
   private static class MediaProjectionCallback extends MediaProjection.Callback {
     private final ImageReader reader;
     private final Surface surface;
