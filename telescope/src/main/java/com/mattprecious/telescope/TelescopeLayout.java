@@ -690,6 +690,11 @@ public class TelescopeLayout extends FrameLayout {
             bitmap.recycle();
           }
 
+          // Even though we're closing the reader in MediaProjectionCallback, we also need to close
+          // it here. The callback is invoked asynchronously, which means we can receive another
+          // image before the reader is closed.
+          imageReader.close();
+
           projection.stop();
         }
       }, getBackgroundHandler());
