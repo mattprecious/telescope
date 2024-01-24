@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+Version 2.3.0 *(2024-01-24)*
+----------------------------
+
+* Bump compile/target SDK to 34.
+* Add `FOREGROUND_SERVICE_MEDIA_PROJECTION` permission.
+
 Version 2.2.0 *(2019-10-29)*
 ----------------------------
 
