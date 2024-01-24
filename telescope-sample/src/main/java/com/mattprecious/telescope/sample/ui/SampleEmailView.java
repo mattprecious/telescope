@@ -17,6 +17,6 @@ public class SampleEmailView extends FrameLayout {
   @Override protected void onFinishInflate() {
     super.onFinishInflate();
     telescopeView = findViewById(R.id.telescope);
-    telescopeView.setLens(new EmailLens(getContext(), "Bug report", "bugs@blackhole.io"));
+    telescopeView.setLens(new EmailLens(getContext(), "Bug report", "bugs@example.com"));
   }
 }

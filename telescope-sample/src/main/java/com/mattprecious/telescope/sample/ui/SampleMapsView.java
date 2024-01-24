@@ -41,7 +41,7 @@ public class SampleMapsView extends FrameLayout {
     final MapView mapView;
 
     public MapsEmailLens(Context context, MapView mapView) {
-      super(context, "Bug report", "bugs@blackhole.io");
+      super(context, "Bug report", "bugs@example.com");
       this.mapView = mapView;
     }
 
