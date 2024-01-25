@@ -21,7 +21,6 @@ import android.media.ImageReader;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Process;
@@ -79,6 +78,8 @@ public class TelescopeLayout extends FrameLayout {
   private final Runnable trigger = this::trigger;
   private final IntentFilter requestCaptureFilter;
   private final BroadcastReceiver requestCaptureReceiver;
+  private final IntentFilter serviceStartedFilter;
+  private final BroadcastReceiver serviceStartedReceiver;
 
   private final float halfStrokeWidth;
   private final Paint progressPaint;
@@ -162,6 +163,8 @@ public class TelescopeLayout extends FrameLayout {
       vibrator = null;
       requestCaptureFilter = null;
       requestCaptureReceiver = null;
+      serviceStartedFilter = null;
+      serviceStartedReceiver = null;
       return;
     }
 
@@ -172,6 +175,8 @@ public class TelescopeLayout extends FrameLayout {
       projectionManager = null;
       requestCaptureFilter = null;
       requestCaptureReceiver = null;
+      serviceStartedFilter = null;
+      serviceStartedReceiver = null;
     } else {
       projectionManager =
           (MediaProjectionManager) context.getApplicationContext()
@@ -180,20 +185,39 @@ public class TelescopeLayout extends FrameLayout {
       requestCaptureFilter =
           new IntentFilter(RequestCaptureActivity.getResultBroadcastAction(context));
       requestCaptureReceiver = new BroadcastReceiver() {
-        @TargetApi(Build.VERSION_CODES.LOLLIPOP) @Override
+        @TargetApi(21) @Override
         public void onReceive(Context context, Intent intent) {
           unregisterRequestCaptureReceiver();
 
           int resultCode = intent.getIntExtra(RequestCaptureActivity.RESULT_EXTRA_CODE,
               Activity.RESULT_CANCELED);
-          Intent data = intent.getParcelableExtra(RequestCaptureActivity.RESULT_EXTRA_DATA);
 
-          final MediaProjection mediaProjection =
-              projectionManager.getMediaProjection(resultCode, data);
-          if (mediaProjection == null) {
+          if (resultCode != Activity.RESULT_OK) {
             captureCanvasScreenshot();
             return;
           }
+
+          // The service needs to be running before we start the projection and there's no guarantee
+          // that it will have started once we return from startForegroundService. Rather than using
+          // binders, we'll just bounce the data through another broadcast from the service.
+          registerServiceStartedReceiver();
+
+          Intent data = intent.getParcelableExtra(RequestCaptureActivity.RESULT_EXTRA_DATA);
+          startForegroundService(data);
+        }
+      };
+
+      serviceStartedFilter =
+          new IntentFilter(TelescopeProjectionService.getStartedBroadcastAction(context));
+      serviceStartedReceiver = new BroadcastReceiver() {
+        @TargetApi(21) @Override
+        public void onReceive(Context context, Intent intent) {
+          unregisterServiceStartedReceiver();
+
+          Intent data = intent.getParcelableExtra(TelescopeProjectionService.EXTRA_DATA);
+
+          final MediaProjection mediaProjection =
+              projectionManager.getMediaProjection(Activity.RESULT_OK, data);
 
           if (intent.getBooleanExtra(RequestCaptureActivity.RESULT_EXTRA_PROMPT_SHOWN, true)) {
             // Delay capture until after the permission dialog is gone.
@@ -409,7 +433,6 @@ public class TelescopeLayout extends FrameLayout {
             && !windowHasSecureFlag()) {
           // Take a full screenshot of the device. Request permission first.
           registerRequestCaptureReceiver();
-          startForegroundService();
           getContext().startActivity(new Intent(getContext(), RequestCaptureActivity.class));
           break;
         }
@@ -596,16 +619,30 @@ public class TelescopeLayout extends FrameLayout {
     }
   }
 
+  private void registerServiceStartedReceiver() {
+    if (SDK_INT >= 33) {
+      getContext().registerReceiver(serviceStartedReceiver, serviceStartedFilter,
+        Context.RECEIVER_EXPORTED);
+    } else {
+      getContext().registerReceiver(serviceStartedReceiver, serviceStartedFilter);
+    }
+  }
+
   void unregisterRequestCaptureReceiver() {
     getContext().unregisterReceiver(requestCaptureReceiver);
   }
 
-  private void startForegroundService() {
+  void unregisterServiceStartedReceiver() {
+    getContext().unregisterReceiver(serviceStartedReceiver);
+  }
+
+  private void startForegroundService(Intent data) {
     if (SDK_INT >= 29) {
       // Starting from SDK 29, media projections require a foreground service
       // see https://github.com/mattprecious/telescope/issues/75
 
       Intent serviceIntent = new Intent(getContext(), TelescopeProjectionService.class);
+      serviceIntent.putExtra(TelescopeProjectionService.EXTRA_DATA, data);
       getContext().startForegroundService(serviceIntent);
     }
   }
