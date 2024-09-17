@@ -486,9 +486,9 @@ public class TelescopeLayout extends FrameLayout {
     // Wait for the next frame to be sure our progress bars are hidden.
     post(() -> {
       View view = getTargetView();
-      view.setDrawingCacheEnabled(true);
-      Bitmap screenshot = Bitmap.createBitmap(view.getDrawingCache());
-      view.setDrawingCacheEnabled(false);
+      Bitmap screenshot = Bitmap.createBitmap(view.getWidth(), view.getHeight(),
+        Bitmap.Config.ARGB_8888);
+      view.draw(new Canvas(screenshot));
 
       capturingEnd();
 
