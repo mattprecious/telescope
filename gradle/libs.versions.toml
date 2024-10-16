@@ -2,7 +2,7 @@
 androidGradlePlugin = "com.android.tools.build:gradle:8.6.0"
 maven-publish-gradlePlugin = "com.vanniktech:gradle-maven-publish-plugin:0.28.0"
 
-androidx-annotations = "androidx.annotation:annotation:1.8.2"
+androidx-annotations = "androidx.annotation:annotation:1.9.0"
 androidx-appCompat = "androidx.appcompat:appcompat:1.6.1"
 androidx-coordinatorLayout = "androidx.coordinatorlayout:coordinatorlayout:1.2.0"
 androidx-multidex = "androidx.multidex:multidex:2.0.1"
