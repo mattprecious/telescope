@@ -21,6 +21,7 @@ import android.media.ImageReader;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Process;
@@ -29,8 +30,10 @@ import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.PixelCopy;
 import android.view.Surface;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import androidx.annotation.ColorInt;
@@ -50,6 +53,7 @@ import static android.animation.ValueAnimator.AnimatorUpdateListener;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static android.graphics.Paint.Style;
 import static android.os.Build.VERSION.SDK_INT;
+import static android.view.PixelCopy.SUCCESS;
 import static com.mattprecious.telescope.Preconditions.checkNotNull;
 
 /**
@@ -193,7 +197,7 @@ public class TelescopeLayout extends FrameLayout {
               Activity.RESULT_CANCELED);
 
           if (resultCode != Activity.RESULT_OK) {
-            captureCanvasScreenshot();
+            captureWindowScreenshot();
             return;
           }
 
@@ -428,8 +432,7 @@ public class TelescopeLayout extends FrameLayout {
     switch (screenshotMode) {
       case SYSTEM:
         if (projectionManager != null
-            && !screenshotChildrenOnly
-            && screenshotTarget == this
+            && shouldCaptureWholeWindow()
             && !windowHasSecureFlag()) {
           // Take a full screenshot of the device. Request permission first.
           registerRequestCaptureReceiver();
@@ -439,7 +442,7 @@ public class TelescopeLayout extends FrameLayout {
 
         // System was requested but isn't supported. Fall through.
       case CANVAS:
-        captureCanvasScreenshot();
+        captureWindowScreenshot();
         break;
       case NONE:
         doneAnimator.start();
@@ -455,6 +458,10 @@ public class TelescopeLayout extends FrameLayout {
     if (vibrate && hasVibratePermission(getContext())) {
       vibrator.vibrate(VIBRATION_DURATION_MS);
     }
+  }
+
+  private boolean shouldCaptureWholeWindow() {
+    return !screenshotChildrenOnly && screenshotTarget == this;
   }
 
   private boolean windowHasSecureFlag() {
@@ -480,21 +487,44 @@ public class TelescopeLayout extends FrameLayout {
     }
   }
 
-  void captureCanvasScreenshot() {
+  private void captureWindowScreenshot() {
     capturingStart();
 
     // Wait for the next frame to be sure our progress bars are hidden.
     post(() -> {
       View view = getTargetView();
-      view.setDrawingCacheEnabled(true);
-      Bitmap screenshot = Bitmap.createBitmap(view.getDrawingCache());
-      view.setDrawingCacheEnabled(false);
-
-      capturingEnd();
-
-      checkLens();
-      lens.onCapture(screenshot, processed -> new SaveScreenshotTask(processed).execute());
+      Window window = findWindow();
+      if (Build.VERSION.SDK_INT >= 26 && shouldCaptureWholeWindow() && window != null) {
+        Bitmap screenshot = Bitmap.createBitmap(window.peekDecorView().getWidth(),
+          window.peekDecorView().getHeight(), Bitmap.Config.ARGB_8888);
+        PixelCopy.request(window, screenshot, copyResult -> {
+          if (copyResult == SUCCESS) {
+            finishCanvasScreenshot(screenshot);
+          } else {
+            Log.e(
+              TAG,
+              "Failed to capture window screenshot (" + copyResult + "). Falling back to canvas."
+            );
+            captureCanvasScreenshot(view);
+          }
+        }, handler);
+      } else {
+        captureCanvasScreenshot(view);
+      }
     });
+  }
+
+  private void captureCanvasScreenshot(View view) {
+    view.setDrawingCacheEnabled(true);
+    Bitmap screenshot = Bitmap.createBitmap(view.getDrawingCache());
+    view.setDrawingCacheEnabled(false);
+    finishCanvasScreenshot(screenshot);
+  }
+
+  private void finishCanvasScreenshot(Bitmap screenshot) {
+    capturingEnd();
+    checkLens();
+    lens.onCapture(screenshot, processed -> new SaveScreenshotTask(processed).execute());
   }
 
   private void capturingStart() {
@@ -524,6 +554,22 @@ public class TelescopeLayout extends FrameLayout {
 
     return view;
   }
+
+  private Window findWindow() {
+    Context c = getContext();
+    while (true) {
+      if (c instanceof Activity) {
+        return ((Activity) c).getWindow();
+      }
+
+      if (c instanceof ContextWrapper) {
+        c = ((ContextWrapper) c).getBaseContext();
+      } else {
+        return null;
+      }
+    }
+  }
+
 
   /** Recursive delete of a file or directory. */
   private static void delete(File file) {
@@ -721,7 +767,7 @@ public class TelescopeLayout extends FrameLayout {
           Log.e(TAG,
               "Failed to capture system screenshot. Setting the screenshot mode to CANVAS.", e);
           setScreenshotMode(ScreenshotMode.CANVAS);
-          post(this::captureCanvasScreenshot);
+          post(this::captureWindowScreenshot);
         } finally {
           if (bitmap != null) {
             bitmap.recycle();
