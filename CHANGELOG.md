@@ -1,6 +1,13 @@
 Change Log
 ==========
 
+Version 2.4.0 *(2024-11-11)*
+----------------------------
+
+* Use `PixelCopy` API for full-screen 'canvas' captures on API 26+. This supports hardware rendering
+  so will no longer crash with hardware bitmaps (#142) and is also able to capture additional
+  details like shadows from elevation.
+
 Version 2.3.0 *(2024-01-25)*
 ----------------------------
 
