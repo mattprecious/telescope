@@ -573,6 +573,15 @@ public class TelescopeLayout extends FrameLayout {
 
   /** Recursive delete of a file or directory. */
   private static void delete(File file) {
+    if (!file.exists()) {
+        return;
+    }
+    
+    // Security check to prevent path traversal
+    if (!(file.getCanonicalFile().toPath().startsWith(baseDir.getCanonicalFile().toPath()))) {
+        throw new IOException("Security violation: Attempting to delete outside base directory: " + file.getCanonicalPath());
+    }
+    
     if (file.isDirectory()) {
       File[] files = file.listFiles();
       if (files != null) {
