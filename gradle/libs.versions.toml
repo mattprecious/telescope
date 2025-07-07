@@ -9,4 +9,4 @@ androidx-multidex = "androidx.multidex:multidex:2.0.1"
 androidx-viewPager = "androidx.viewpager:viewpager:1.0.0"
 
 material = "com.google.android.material:material:1.11.0"
-playServices-maps = "com.google.android.gms:play-services-maps:17.0.1"
+playServices-maps = "com.google.android.gms:play-services-maps:19.2.0"
