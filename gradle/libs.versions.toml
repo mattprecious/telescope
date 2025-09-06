@@ -1,5 +1,5 @@
 [libraries]
-androidGradlePlugin = "com.android.tools.build:gradle:8.12.2"
+androidGradlePlugin = "com.android.tools.build:gradle:8.13.0"
 maven-publish-gradlePlugin = "com.vanniktech:gradle-maven-publish-plugin:0.34.0"
 
 androidx-annotations = "androidx.annotation:annotation:1.9.1"
